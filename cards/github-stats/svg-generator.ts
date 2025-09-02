@@ -69,7 +69,7 @@ export function generateStatsSVG(
       veryActive: "Code Wizard",
       level: "Nível",
       joined: "Entrou em",
-      stats: "Estatísticas do GitHub"
+      stats: "Estatísticas do GitHub",
     },
     en: {
       title: "GitHub Stats",
@@ -81,16 +81,17 @@ export function generateStatsSVG(
       veryActive: "Code Wizard",
       level: "Level",
       joined: "Joined",
-      stats: "GitHub Stats"
-    }
+      stats: "GitHub Stats",
+    },
   };
 
-  const t = translations[language] || translations.pt;
+  const t =
+    translations[language as keyof typeof translations] || translations.pt;
 
   // Bordas fixas para cada tema
   const getThemeBorder = () => {
-    if (!showBorder) return '';
-    
+    if (!showBorder) return "";
+
     const borderStyles = {
       dark: `
         .led-segment {
@@ -121,10 +122,12 @@ export function generateStatsSVG(
           animation: cyberCycle 3s ease-in-out infinite;
           stroke-linecap: round;
         }
-      `
+      `,
     };
-    
-    return borderStyles[theme] || borderStyles.dark;
+
+    return (
+      borderStyles[theme as keyof typeof borderStyles] || borderStyles.dark
+    );
   };
 
   const escapeXml = (text: string) => {
@@ -148,7 +151,21 @@ export function generateStatsSVG(
       <!-- Background expandido para a borda neon -->
       <rect width="550" height="220" fill="#0a0a0a" opacity="0.1" rx="20"/>
       <title id="titleId">${escapeXml(stats.username)} - ${t.title}</title>
-      <desc id="descId">${language === 'pt' ? `${t.stats} para ${escapeXml(stats.username)}: ${stats.repos} repositórios, ${formatNumber(stats.stars)} estrelas, ${formatNumber(stats.forks)} forks, ${formatNumber(stats.followers)} seguidores` : `GitHub statistics for ${escapeXml(stats.username)}: ${stats.repos} repositories, ${formatNumber(stats.stars)} stars, ${formatNumber(stats.forks)} forks, ${formatNumber(stats.followers)} followers`}</desc>
+      <desc id="descId">${
+        language === "pt"
+          ? `${t.stats} para ${escapeXml(stats.username)}: ${
+              stats.repos
+            } repositórios, ${formatNumber(
+              stats.stars
+            )} estrelas, ${formatNumber(stats.forks)} forks, ${formatNumber(
+              stats.followers
+            )} seguidores`
+          : `GitHub statistics for ${escapeXml(stats.username)}: ${
+              stats.repos
+            } repositories, ${formatNumber(stats.stars)} stars, ${formatNumber(
+              stats.forks
+            )} forks, ${formatNumber(stats.followers)} followers`
+      }</desc>
       
       <defs>
         <clipPath id="avatar-clip">
@@ -299,7 +316,9 @@ export function generateStatsSVG(
         }
       </style>
       
-      ${showBorder ? `
+      ${
+        showBorder
+          ? `
         <!-- Theme-specific LED Border Segments -->
         <!-- Top segments -->
         <line x1="25" y1="10" x2="75" y2="10" stroke-width="8" class="led-segment" filter="url(#neonGlow)"/>
@@ -336,7 +355,9 @@ export function generateStatsSVG(
         <line x1="25" y1="160" x2="25" y2="110" stroke-width="8" class="led-segment" filter="url(#neonGlow)"/>
         <line x1="25" y1="110" x2="25" y2="60" stroke-width="8" class="led-segment" filter="url(#neonGlow)"/>
         <line x1="25" y1="60" x2="25" y2="10" stroke-width="8" class="led-segment" filter="url(#neonGlow)"/>
-      ` : ''}
+      `
+          : ""
+      }
       
       <!-- Background -->
       <rect
@@ -363,8 +384,12 @@ export function generateStatsSVG(
       <!-- Right side info panel -->
       <g transform="translate(375, 20)">
         <!-- Avatar circle with real image -->
-        <circle cx="60" cy="25" r="20" fill="${currentTheme.primary}" opacity="0.1" stroke="${currentTheme.primary}" stroke-width="2"/>
-        ${stats.avatar && showAvatar ? `
+        <circle cx="60" cy="25" r="20" fill="${
+          currentTheme.primary
+        }" opacity="0.1" stroke="${currentTheme.primary}" stroke-width="2"/>
+        ${
+          stats.avatar && showAvatar
+            ? `
           <defs>
             <pattern id="avatarPattern" patternUnits="userSpaceOnUse" width="40" height="40">
               <image href="${stats.avatar}" x="0" y="0" width="40" height="40" preserveAspectRatio="xMidYMid slice"/>
@@ -372,24 +397,51 @@ export function generateStatsSVG(
           </defs>
           <circle cx="60" cy="25" r="20" fill="url(#avatarPattern)" clip-path="url(#avatar-clip)"/>
           <circle cx="60" cy="25" r="20" fill="none" stroke="${currentTheme.primary}" stroke-width="2" opacity="0.3"/>
-        ` : `
+        `
+            : `
           <text x="60" y="30" fill="${currentTheme.primary}" font-family="Segoe UI, system-ui, sans-serif" font-size="16" font-weight="700" text-anchor="middle">👤</text>
-        `}
+        `
+        }
         
                 <!-- Activity indicator -->
         <g transform="translate(0, 60)">
-          <rect x="0" y="0" width="120" height="25" fill="${currentTheme.cardBg}" rx="4" stroke="${currentTheme.border}" stroke-width="0.5"/>
-          <circle cx="8" cy="12.5" r="3" fill="${stats.stars > 50 ? '#00ff88' : stats.stars > 10 ? '#ffa500' : '#ff6b6b'}" class="blink"/>
-          <text x="18" y="16" fill="${currentTheme.text}" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600">
-            ${stats.stars > 50 ? t.veryActive : stats.stars > 10 ? t.active : t.gettingStarted}
+          <rect x="0" y="0" width="120" height="25" fill="${
+            currentTheme.cardBg
+          }" rx="4" stroke="${currentTheme.border}" stroke-width="0.5"/>
+          <circle cx="8" cy="12.5" r="3" fill="${
+            stats.stars > 50
+              ? "#00ff88"
+              : stats.stars > 10
+              ? "#ffa500"
+              : "#ff6b6b"
+          }" class="blink"/>
+          <text x="18" y="16" fill="${
+            currentTheme.text
+          }" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="600">
+            ${
+              stats.stars > 50
+                ? t.veryActive
+                : stats.stars > 10
+                ? t.active
+                : t.gettingStarted
+            }
       </text>
         </g>
         
         <!-- Level badge with progress -->
         <g transform="translate(0, 95)">
-          <rect x="0" y="0" width="120" height="20" fill="${currentTheme.primary}" opacity="0.1" rx="4" stroke="${currentTheme.primary}" stroke-width="1"/>
-          <rect x="2" y="2" width="${Math.min(116, (stats.stars % 10) * 11.6)}" height="16" fill="${currentTheme.primary}" opacity="0.3" rx="2"/>
-          <text x="60" y="13" fill="${currentTheme.primary}" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="700" text-anchor="middle">
+          <rect x="0" y="0" width="120" height="20" fill="${
+            currentTheme.primary
+          }" opacity="0.1" rx="4" stroke="${
+    currentTheme.primary
+  }" stroke-width="1"/>
+          <rect x="2" y="2" width="${Math.min(
+            116,
+            (stats.stars % 10) * 11.6
+          )}" height="16" fill="${currentTheme.primary}" opacity="0.3" rx="2"/>
+          <text x="60" y="13" fill="${
+            currentTheme.primary
+          }" font-family="Segoe UI, system-ui, sans-serif" font-size="10" font-weight="700" text-anchor="middle">
             ${t.level} ${Math.min(10, Math.floor(stats.stars / 10) + 1)}
           </text>
         </g>
@@ -397,7 +449,12 @@ export function generateStatsSVG(
         <!-- Join date -->
         <g transform="translate(0, 125)">
           <text x="0" y="0" fill="#9f9f9f" font-family="Segoe UI, system-ui, sans-serif" font-size="9" font-weight="400">
-            ${t.joined} ${new Date(Date.now() - stats.accountAge * 24 * 60 * 60 * 1000).toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US', { month: 'short', year: 'numeric' })}
+            ${t.joined} ${new Date(
+    Date.now() - stats.accountAge * 24 * 60 * 60 * 1000
+  ).toLocaleDateString(language === "pt" ? "pt-BR" : "en-US", {
+    month: "short",
+    year: "numeric",
+  })}
           </text>
         </g>
       </g>
@@ -411,7 +468,9 @@ export function generateStatsSVG(
               <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
             </svg>
             <text class="stat bold" x="25" y="12.5">${t.totalStars}</text>
-            <text class="stat bold" x="219.01" y="12.5" data-testid="stars">${formatNumber(stats.stars)}</text>
+            <text class="stat bold" x="219.01" y="12.5" data-testid="stars">${formatNumber(
+              stats.stars
+            )}</text>
           </g>
           
           <!-- Repositories -->
@@ -420,7 +479,9 @@ export function generateStatsSVG(
               <path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/>
             </svg>
             <text class="stat bold" x="25" y="12.5">${t.totalRepos}</text>
-            <text class="stat bold" x="219.01" y="12.5" data-testid="repos">${stats.repos}</text>
+            <text class="stat bold" x="219.01" y="12.5" data-testid="repos">${
+              stats.repos
+            }</text>
           </g>
         
         <!-- Forks -->
@@ -429,7 +490,9 @@ export function generateStatsSVG(
               <path fill-rule="evenodd" d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z"/>
             </svg>
             <text class="stat bold" x="25" y="12.5">${t.totalForks}</text>
-            <text class="stat bold" x="219.01" y="12.5" data-testid="forks">${formatNumber(stats.forks)}</text>
+            <text class="stat bold" x="219.01" y="12.5" data-testid="forks">${formatNumber(
+              stats.forks
+            )}</text>
           </g>
           
           <!-- Followers -->
@@ -438,7 +501,9 @@ export function generateStatsSVG(
               <path fill-rule="evenodd" d="M5.5 3.5a2 2 0 100 4 2 2 0 000-4zM2 5.5a3.5 3.5 0 115.898 2.549 5.507 5.507 0 013.034 4.084.75.75 0 11-1.482.235 4.001 4.001 0 00-7.9 0 .75.75 0 01-1.482-.236A5.507 5.507 0 013.102 8.05 3.49 3.49 0 012 5.5zM11 4a.75.75 0 100 1.5 1.5 1.5 0 01.666 2.844.75.75 0 00-.416.672v.352a.75.75 0 00.574.73c1.2.289 2.162 1.2 2.522 2.372a.75.75 0 101.434-.44 5.01 5.01 0 00-2.56-3.012A3 3 0 0011 4z"/>
             </svg>
             <text class="stat bold" x="25" y="12.5">Total Followers:</text>
-            <text class="stat bold" x="219.01" y="12.5" data-testid="followers">${formatNumber(stats.followers)}</text>
+            <text class="stat bold" x="219.01" y="12.5" data-testid="followers">${formatNumber(
+              stats.followers
+            )}</text>
           </g>
         
         <!-- Top Languages -->
@@ -448,7 +513,10 @@ export function generateStatsSVG(
             </svg>
             <text class="stat bold" x="25" y="12.5">Top Languages:</text>
             <text class="stat" x="219.01" y="12.5" data-testid="languages">
-              ${stats.languages.slice(0, 3).map(lang => lang.name).join(", ")}
+              ${stats.languages
+                .slice(0, 3)
+                .map((lang) => lang.name)
+                .join(", ")}
         </text>
           </g>
         </svg>

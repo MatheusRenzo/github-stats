@@ -1,14 +1,28 @@
 {
   "name": "github-stats",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "Gerador de estatísticas do GitHub em formato SVG",
+  "keywords": [
+    "github",
+    "stats",
+    "svg",
+    "nextjs",
+    "vercel"
+  ],
+  "author": "Matheus Renzo",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "test": "npm run build && npm run start",
+    "lint": "next lint",
+    "deploy:preview": "vercel",
+    "deploy:production": "vercel --prod"
   },
   "dependencies": {
+    "critters": "^0.0.23",
     "next": "14.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
@@ -19,6 +33,11 @@
     "@types/react-dom": "^18.0.0",
     "eslint": "^8.0.0",
     "eslint-config-next": "14.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vercel": "^46.1.1"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

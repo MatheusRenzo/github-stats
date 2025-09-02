@@ -88,3 +88,16 @@ temp/
 # Test files (arquivos de teste que não são necessários no repositório)
 test-*.html
 test-*.svg
+
+# Vercel specific
+.vercel/project.json
+.vercel/output
+
+# Build analysis
+.next/analyze/
+
+# Local development
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
