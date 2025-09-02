@@ -31,6 +31,15 @@ export interface SimpleStats {
   accountAge: number;
 }
 
+export interface StatsOptions {
+  username?: string;
+  theme?: string;
+  showBorder?: boolean;
+  language?: "pt" | "en";
+  avatar?: string;
+  useCustomAvatar?: boolean;
+}
+
 export interface Theme {
   background: string;
   text: string;

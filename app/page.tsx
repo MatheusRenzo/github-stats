@@ -6,18 +6,35 @@ export default function Home() {
   const [username, setUsername] = useState("MatheusRenzo");
   const [theme, setTheme] = useState("dark");
   const [showBorder, setShowBorder] = useState(true);
+  const [language, setLanguage] = useState("pt");
+  const [useCustomAvatar, setUseCustomAvatar] = useState(false);
+  const [customAvatar, setCustomAvatar] = useState("");
+
   const [svgUrl, setSvgUrl] = useState("");
+  const [cleanUrl, setCleanUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
 
+  const generateCleanUrl = () => {
+    let url = `/api/stats?username=${encodeURIComponent(
+      username
+    )}&theme=${theme}&showBorder=${showBorder}&language=${language}`;
+
+    if (useCustomAvatar && customAvatar) {
+      url += `&useCustomAvatar=true&avatar=${encodeURIComponent(customAvatar)}`;
+    }
+
+    return url;
+  };
+
   const generateStats = async () => {
     setIsLoading(true);
-    const url = `/api/stats?username=${encodeURIComponent(
-      username
-    )}&theme=${theme}&showBorder=${showBorder}&t=${Date.now()}`;
-    setSvgUrl(url);
+    const newCleanUrl = generateCleanUrl();
+    const urlWithTimestamp = `${newCleanUrl}&t=${Date.now()}`;
+    setCleanUrl(newCleanUrl);
+    setSvgUrl(urlWithTimestamp);
     setIsLoading(false);
   };
 
@@ -28,7 +45,7 @@ export default function Home() {
   };
 
   const copyUrl = async () => {
-    const fullUrl = `${window.location.origin}${svgUrl}`;
+    const fullUrl = `${window.location.origin}${cleanUrl}`;
     try {
       await navigator.clipboard.writeText(fullUrl);
       setCopied(true);
@@ -44,7 +61,7 @@ export default function Home() {
     if (username) {
       generateStats();
     }
-  }, [username, theme, showBorder]);
+  }, [username, theme, showBorder, language, useCustomAvatar, customAvatar]);
 
   return (
     <div style={{ minHeight: "100vh", position: "relative" }}>
@@ -250,6 +267,29 @@ export default function Home() {
             <div>
               <label
                 style={{
+                  display: "block",
+                  fontSize: "0.875rem",
+                  fontWeight: "600",
+                  color: "#d1d5db",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                Idioma
+              </label>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="input"
+                style={{ appearance: "none", cursor: "pointer" }}
+              >
+                <option value="pt">🇧🇷 Português</option>
+                <option value="en">🇺🇸 English</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                style={{
                   display: "flex",
                   alignItems: "center",
                   gap: "0.5rem",
@@ -271,6 +311,106 @@ export default function Home() {
                 />
                 Mostrar Borda
               </label>
+            </div>
+          </div>
+
+          {/* Avatar Customization Section */}
+          <div
+            style={{
+              border: "1px solid rgba(75, 85, 99, 0.3)",
+              borderRadius: "0.75rem",
+              padding: "1.5rem",
+              marginBottom: "1.5rem",
+              background: "rgba(17, 24, 39, 0.3)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: "1.125rem",
+                fontWeight: "600",
+                color: "white",
+                marginBottom: "1rem",
+              }}
+            >
+              🎭 Personalização do Avatar
+            </h3>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                gap: "1.5rem",
+              }}
+            >
+              <div>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    fontSize: "0.875rem",
+                    fontWeight: "600",
+                    color: "#d1d5db",
+                    cursor: "pointer",
+                    marginBottom: "0.75rem",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={useCustomAvatar}
+                    onChange={(e) => setUseCustomAvatar(e.target.checked)}
+                    style={{
+                      width: "1rem",
+                      height: "1rem",
+                      accentColor: "#3b82f6",
+                    }}
+                  />
+                  Usar Avatar Personalizado
+                </label>
+                <p
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "#9ca3af",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  {useCustomAvatar
+                    ? "Avatar personalizado será usado"
+                    : "Avatar do GitHub será usado (padrão)"}
+                </p>
+              </div>
+
+              {useCustomAvatar && (
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "#d1d5db",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Avatar Personalizado
+                  </label>
+                  <input
+                    type="text"
+                    value={customAvatar}
+                    onChange={(e) => setCustomAvatar(e.target.value)}
+                    className="input"
+                    placeholder="URL da imagem ou emoji (ex: 🚀)"
+                  />
+                  <p
+                    style={{
+                      fontSize: "0.75rem",
+                      color: "#9ca3af",
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    Digite uma URL de imagem ou um emoji
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -328,7 +468,7 @@ export default function Home() {
         </div>
 
         {/* Generated Card Display */}
-        {svgUrl && (
+        {cleanUrl && (
           <div className="card" style={{ marginBottom: "2rem" }}>
             <div
               style={{
@@ -462,12 +602,130 @@ export default function Home() {
                     fontFamily: "monospace",
                   }}
                 >
-                  {`${window.location.origin}${svgUrl}`}
+                  {`${window.location.origin}${cleanUrl}`}
                 </code>
               </div>
             </div>
           </div>
         )}
+
+        {/* Features */}
+        <div className="card" style={{ marginBottom: "2rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+            <h2
+              style={{
+                fontSize: "1.875rem",
+                fontWeight: "bold",
+                color: "white",
+                marginBottom: "1rem",
+              }}
+            >
+              ✨ Funcionalidades
+            </h2>
+            <p
+              style={{
+                color: "#9ca3af",
+                fontSize: "1.125rem",
+              }}
+            >
+              Todas as opções disponíveis na API
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "1.5rem",
+            }}
+          >
+            <div
+              style={{
+                background: "rgba(17, 24, 39, 0.3)",
+                borderRadius: "0.75rem",
+                padding: "1.5rem",
+                border: "1px solid rgba(75, 85, 99, 0.3)",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "600",
+                  color: "white",
+                  marginBottom: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                🌍 Idiomas
+              </h3>
+              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
+                <li>🇧🇷 Português (pt)</li>
+                <li>🇺🇸 English (en)</li>
+              </ul>
+            </div>
+
+            <div
+              style={{
+                background: "rgba(17, 24, 39, 0.3)",
+                borderRadius: "0.75rem",
+                padding: "1.5rem",
+                border: "1px solid rgba(75, 85, 99, 0.3)",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "600",
+                  color: "white",
+                  marginBottom: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                🎨 Temas
+              </h3>
+              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
+                <li>🌙 Dark</li>
+                <li>☀️ Light</li>
+                <li>🎨 Radical</li>
+                <li>⚡ Neon</li>
+                <li>🤖 Cyber</li>
+              </ul>
+            </div>
+
+            <div
+              style={{
+                background: "rgba(17, 24, 39, 0.3)",
+                borderRadius: "0.75rem",
+                padding: "1.5rem",
+                border: "1px solid rgba(75, 85, 99, 0.3)",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "600",
+                  color: "white",
+                  marginBottom: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                🎭 Avatares
+              </h3>
+              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
+                <li>👤 Avatar do GitHub</li>
+                <li>🖼️ URL de imagem</li>
+                <li>😀 Emojis</li>
+                <li>✨ Borda animada</li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
         {/* How to Use */}
         <div className="card">
@@ -519,7 +777,8 @@ export default function Home() {
               >
                 {[
                   "Digite um username válido do GitHub",
-                  "Escolha um tema (Dark, Light ou Radical)",
+                  "Escolha um tema e idioma",
+                  "Configure o avatar (GitHub ou personalizado)",
                   'Clique em "Gerar Estatísticas"',
                   "Use a URL gerada em seu README.md",
                 ].map((step, index) => (
@@ -607,7 +866,13 @@ export default function Home() {
                       wordBreak: "break-all",
                     }}
                   >
-                    {`![GitHub Stats](https://seu-dominio.com/api/stats?username=${username}&theme=${theme})`}
+                    {`![GitHub Stats](https://seu-dominio.com/api/stats?username=${username}&theme=${theme}&language=${language}${
+                      useCustomAvatar && customAvatar
+                        ? `&useCustomAvatar=true&avatar=${encodeURIComponent(
+                            customAvatar
+                          )}`
+                        : ""
+                    })`}
                   </code>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
+  metadataBase: new URL("https://github-stats.vercel.app"),
   title: "GitHub Stats Generator | Gerador de Estatísticas do GitHub",
   description:
     "Gere estatísticas dinâmicas do GitHub em formato SVG para seu perfil. Ferramenta gratuita e fácil de usar para desenvolvedores.",
@@ -51,13 +52,14 @@ export const metadata = {
       "Gere estatísticas dinâmicas do GitHub em formato SVG para seu perfil",
     images: ["/og-image.png"],
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
-  themeColor: "#3b82f6",
   manifest: "/manifest.json",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#3b82f6",
 };
 
 export default function RootLayout({

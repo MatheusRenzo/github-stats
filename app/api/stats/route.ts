@@ -10,6 +10,9 @@ export async function GET(request: NextRequest) {
   const username = searchParams.get("username") || "MatheusRenzo";
   const theme = searchParams.get("theme") || "dark";
   const showBorder = searchParams.get("showBorder") !== "false";
+  const language = searchParams.get("language") || "pt";
+  const customAvatar = searchParams.get("avatar");
+  const useCustomAvatar = searchParams.get("useCustomAvatar") === "true";
 
   try {
     const [user, repos] = await Promise.all([
@@ -41,7 +44,7 @@ export async function GET(request: NextRequest) {
     const stats = {
       username: user.login,
       name: user.name || user.login,
-      avatar: user.avatar_url,
+      avatar: useCustomAvatar && customAvatar ? customAvatar : user.avatar_url,
       repos: user.public_repos,
       stars: totalStars,
       forks: totalForks,
@@ -54,7 +57,13 @@ export async function GET(request: NextRequest) {
       ),
     };
 
-    const svg = generateStatsSVG(stats, theme, "pt", true, showBorder);
+    const svg = generateStatsSVG(
+      stats,
+      theme,
+      language,
+      true,
+      showBorder
+    );
 
     return new Response(svg, {
       headers: {
@@ -68,7 +77,7 @@ export async function GET(request: NextRequest) {
     const errorStats = {
       username: username,
       name: username,
-      avatar: "",
+      avatar: useCustomAvatar && customAvatar ? customAvatar : "",
       repos: 0,
       stars: 0,
       forks: 0,
@@ -78,7 +87,13 @@ export async function GET(request: NextRequest) {
       accountAge: 0,
     };
 
-    const errorSVG = generateStatsSVG(errorStats, theme, "pt", true, showBorder);
+    const errorSVG = generateStatsSVG(
+      errorStats,
+      theme,
+      language,
+      true,
+      showBorder
+    );
 
     return new Response(errorSVG, {
       headers: {
