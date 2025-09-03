@@ -29,6 +29,15 @@ export const themes: ThemeConfig = {
     border: "#1a1b26",
     cardBg: "rgba(26, 27, 38, 0.8)",
   },
+  tanjiro: {
+    background: "#0d1117",
+    text: "#f97316",
+    primary: "#dc2626",
+    secondary: "#fbbf24",
+    accent: "#ef4444",
+    border: "#7f1d1d",
+    cardBg: "rgba(20, 20, 20, 0.9)",
+  },
 };
 
 // Configuração de estilos CSS

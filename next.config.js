@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Configurações para otimização no Vercel
-  output: "standalone",
-
   // Configurações de imagem otimizadas para Vercel
   images: {
     unoptimized: true,

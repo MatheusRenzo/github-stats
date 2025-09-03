@@ -7,8 +7,6 @@ export default function Home() {
   const [theme, setTheme] = useState("dark");
   const [showBorder, setShowBorder] = useState(true);
   const [language, setLanguage] = useState("pt");
-  const [useCustomAvatar, setUseCustomAvatar] = useState(false);
-  const [customAvatar, setCustomAvatar] = useState("");
 
   const [svgUrl, setSvgUrl] = useState("");
   const [cleanUrl, setCleanUrl] = useState("");
@@ -18,15 +16,9 @@ export default function Home() {
   const [notificationMessage, setNotificationMessage] = useState("");
 
   const generateCleanUrl = () => {
-    let url = `/api/stats?username=${encodeURIComponent(
+    return `/api/stats?username=${encodeURIComponent(
       username
     )}&theme=${theme}&showBorder=${showBorder}&language=${language}`;
-
-    if (useCustomAvatar && customAvatar) {
-      url += `&useCustomAvatar=true&avatar=${encodeURIComponent(customAvatar)}`;
-    }
-
-    return url;
   };
 
   const generateStats = async () => {
@@ -61,7 +53,7 @@ export default function Home() {
     if (username) {
       generateStats();
     }
-  }, [username, theme, showBorder, language, useCustomAvatar, customAvatar]);
+  }, [username, theme, showBorder, language]);
 
   return (
     <div style={{ minHeight: "100vh", position: "relative" }}>
@@ -176,7 +168,8 @@ export default function Home() {
               lineHeight: "1.6",
             }}
           >
-            Gere estatísticas simples do GitHub em formato SVG
+            Gere estatísticas gamificadas do GitHub com sistema de níveis e
+            escudos únicos
           </p>
         </header>
 
@@ -261,6 +254,7 @@ export default function Home() {
                 <option value="radical">🎨 Radical</option>
                 <option value="neon">⚡ Neon</option>
                 <option value="cyber">🤖 Cyber</option>
+                <option value="tanjiro">🔥 Tanjiro</option>
               </select>
             </div>
 
@@ -311,106 +305,6 @@ export default function Home() {
                 />
                 Mostrar Borda
               </label>
-            </div>
-          </div>
-
-          {/* Avatar Customization Section */}
-          <div
-            style={{
-              border: "1px solid rgba(75, 85, 99, 0.3)",
-              borderRadius: "0.75rem",
-              padding: "1.5rem",
-              marginBottom: "1.5rem",
-              background: "rgba(17, 24, 39, 0.3)",
-            }}
-          >
-            <h3
-              style={{
-                fontSize: "1.125rem",
-                fontWeight: "600",
-                color: "white",
-                marginBottom: "1rem",
-              }}
-            >
-              🎭 Personalização do Avatar
-            </h3>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                gap: "1.5rem",
-              }}
-            >
-              <div>
-                <label
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    color: "#d1d5db",
-                    cursor: "pointer",
-                    marginBottom: "0.75rem",
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={useCustomAvatar}
-                    onChange={(e) => setUseCustomAvatar(e.target.checked)}
-                    style={{
-                      width: "1rem",
-                      height: "1rem",
-                      accentColor: "#3b82f6",
-                    }}
-                  />
-                  Usar Avatar Personalizado
-                </label>
-                <p
-                  style={{
-                    fontSize: "0.75rem",
-                    color: "#9ca3af",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  {useCustomAvatar
-                    ? "Avatar personalizado será usado"
-                    : "Avatar do GitHub será usado (padrão)"}
-                </p>
-              </div>
-
-              {useCustomAvatar && (
-                <div>
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      color: "#d1d5db",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    Avatar Personalizado
-                  </label>
-                  <input
-                    type="text"
-                    value={customAvatar}
-                    onChange={(e) => setCustomAvatar(e.target.value)}
-                    className="input"
-                    placeholder="URL da imagem ou emoji (ex: 🚀)"
-                  />
-                  <p
-                    style={{
-                      fontSize: "0.75rem",
-                      color: "#9ca3af",
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    Digite uma URL de imagem ou um emoji
-                  </p>
-                </div>
-              )}
             </div>
           </div>
 
@@ -487,9 +381,12 @@ export default function Home() {
                     marginBottom: "0.5rem",
                   }}
                 >
-                  GitHub Stats
+                  GitHub Stats Gamificadas
                 </h2>
-                <p style={{ color: "#9ca3af" }}>Card gerado com sucesso!</p>
+                <p style={{ color: "#9ca3af" }}>
+                  Card gamificado gerado com sucesso! Veja seu nível e escudo
+                  únicos.
+                </p>
               </div>
               <button
                 onClick={copyUrl}
@@ -628,7 +525,7 @@ export default function Home() {
                 fontSize: "1.125rem",
               }}
             >
-              Todas as opções disponíveis na API
+              Todas as opções disponíveis na API com sistema gamificado
             </p>
           </div>
 
@@ -688,11 +585,11 @@ export default function Home() {
                 🎨 Temas
               </h3>
               <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
-                <li>🌙 Dark</li>
-                <li>☀️ Light</li>
-                <li>🎨 Radical</li>
-                <li>⚡ Neon</li>
-                <li>🤖 Cyber</li>
+                <li>🌙 Dark - Tema escuro clássico</li>
+                <li>☀️ Light - Tema claro e limpo</li>
+                <li>🎨 Radical - Cores vibrantes e contrastantes</li>
+                <li>⚡ Neon - Efeitos neon e brilhantes</li>
+                <li>🤖 Cyber - Estilo cyberpunk futurista</li>
               </ul>
             </div>
 
@@ -715,13 +612,175 @@ export default function Home() {
                   gap: "0.5rem",
                 }}
               >
-                🎭 Avatares
+                🎨 Visual
               </h3>
               <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
-                <li>👤 Avatar do GitHub</li>
-                <li>🖼️ URL de imagem</li>
-                <li>😀 Emojis</li>
-                <li>✨ Borda animada</li>
+                <li>🛡️ Escudos baseados em nível</li>
+                <li>✨ Bordas animadas por tema</li>
+                <li>🎮 Sistema de níveis gamificado</li>
+                <li>🏆 Títulos épicos personalizados</li>
+                <li>📊 Barra de progresso dinâmica</li>
+                <li>🎨 Efeitos visuais únicos</li>
+              </ul>
+            </div>
+
+            <div
+              style={{
+                background: "rgba(17, 24, 39, 0.3)",
+                borderRadius: "0.75rem",
+                padding: "1.5rem",
+                border: "1px solid rgba(75, 85, 99, 0.3)",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "600",
+                  color: "white",
+                  marginBottom: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                🎯 Características Especiais
+              </h3>
+              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
+                <li>🎮 Sistema de níveis gamificado</li>
+                <li>🛡️ Escudos únicos por nível</li>
+                <li>✨ Animações e efeitos visuais</li>
+                <li>📊 Barra de progresso dinâmica</li>
+                <li>🏆 Títulos épicos personalizados</li>
+                <li>🎨 Bordas animadas por tema</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Level System */}
+        <div className="card" style={{ marginBottom: "2rem" }}>
+          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+            <h2
+              style={{
+                fontSize: "1.875rem",
+                fontWeight: "bold",
+                color: "white",
+                marginBottom: "1rem",
+              }}
+            >
+              🎮 Sistema de Níveis Gamificado
+            </h2>
+            <p
+              style={{
+                color: "#9ca3af",
+                fontSize: "1.125rem",
+                maxWidth: "48rem",
+                margin: "0 auto",
+                lineHeight: "1.6",
+              }}
+            >
+              Seu progresso no GitHub é transformado em um sistema de níveis
+              épico com escudos únicos!
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "1.5rem",
+            }}
+          >
+            <div
+              style={{
+                background: "rgba(17, 24, 39, 0.3)",
+                borderRadius: "0.75rem",
+                padding: "1.5rem",
+                border: "1px solid rgba(75, 85, 99, 0.3)",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "600",
+                  color: "white",
+                  marginBottom: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                🏆 Como Funciona
+              </h3>
+              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
+                <li>
+                  • Baseado na média de estrelas, repositórios e seguidores
+                </li>
+                <li>• 5000 níveis únicos disponíveis</li>
+                <li>• Progressão exponencial para desafio</li>
+                <li>• Títulos épicos a cada 5 níveis</li>
+                <li>• Escudos únicos por faixa de nível</li>
+              </ul>
+            </div>
+
+            <div
+              style={{
+                background: "rgba(17, 24, 39, 0.3)",
+                borderRadius: "0.75rem",
+                padding: "1.5rem",
+                border: "1px solid rgba(75, 85, 99, 0.3)",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "600",
+                  color: "white",
+                  marginBottom: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                🛡️ Escudos por Nível
+              </h3>
+              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
+                <li>• Bronze (1-35): Escudos básicos</li>
+                <li>• Prata (36-100): Com brilho interno</li>
+                <li>• Ouro (101-200): Efeitos dourados</li>
+                <li>• Platina (201-500): Animações avançadas</li>
+                <li>• Diamante (501-1000): Partículas mágicas</li>
+                <li>• Lendário (1001-5000): Efeitos cósmicos</li>
+              </ul>
+            </div>
+
+            <div
+              style={{
+                background: "rgba(17, 24, 39, 0.3)",
+                borderRadius: "0.75rem",
+                padding: "1.5rem",
+                border: "1px solid rgba(75, 85, 99, 0.3)",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: "600",
+                  color: "white",
+                  marginBottom: "1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                ⭐ Títulos Épicos
+              </h3>
+              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
+                <li>• APRENDIZ → MAGO → ARQUIMAGO</li>
+                <li>• MESTRE DOS MAGOS → REI DOS MAGOS</li>
+                <li>• DEUS DA MAGIA → SUPREMO MÁGICO</li>
+                <li>• CÓSMICO MÁGICO → UNIVERSAL MÁGICO</li>
+                <li>• MÁGICO SUPREMO UNIVERSAL (Nível 5000)</li>
               </ul>
             </div>
           </div>
@@ -778,8 +837,8 @@ export default function Home() {
                 {[
                   "Digite um username válido do GitHub",
                   "Escolha um tema e idioma",
-                  "Configure o avatar (GitHub ou personalizado)",
                   'Clique em "Gerar Estatísticas"',
+                  "Veja seu nível e escudo únicos gerados",
                   "Use a URL gerada em seu README.md",
                 ].map((step, index) => (
                   <div
@@ -866,13 +925,7 @@ export default function Home() {
                       wordBreak: "break-all",
                     }}
                   >
-                    {`![GitHub Stats](https://seu-dominio.com/api/stats?username=${username}&theme=${theme}&language=${language}${
-                      useCustomAvatar && customAvatar
-                        ? `&useCustomAvatar=true&avatar=${encodeURIComponent(
-                            customAvatar
-                          )}`
-                        : ""
-                    })`}
+                    {`![GitHub Stats](https://seu-dominio.com/api/stats?username=${username}&theme=${theme}&language=${language})`}
                   </code>
                 </div>
               </div>
