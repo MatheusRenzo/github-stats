@@ -8,7 +8,7 @@ export default function ReposPage() {
   const [theme, setTheme] = useState("dark");
   const [language, setLanguage] = useState("pt");
   const [showBorder, setShowBorder] = useState(true);
-  const [cardType, setCardType] = useState("repos");
+  const [cardType, setCardType] = useState("repos-list");
 
   const generateUrl = () => {
     const params = new URLSearchParams({
@@ -116,7 +116,7 @@ export default function ReposPage() {
               backgroundClip: "text",
             }}
           >
-            GitHub Repositories Cards
+            GitHub Repositories List
           </h1>
           <p
             style={{
@@ -127,8 +127,7 @@ export default function ReposPage() {
               lineHeight: "1.6",
             }}
           >
-            Gere cards personalizados com estatísticas e listas dos seus
-            repositórios do GitHub
+            Gere cards personalizados com listas dos seus repositórios do GitHub
           </p>
 
           {/* Card Type Selection */}
@@ -169,7 +168,7 @@ export default function ReposPage() {
                 border: "2px solid transparent",
               }}
             >
-              📁 Estatísticas dos Repositórios
+              📁 Lista de Repositórios
             </a>
           </div>
         </div>
@@ -225,40 +224,6 @@ export default function ReposPage() {
                   }}
                   placeholder="Digite o username"
                 />
-              </div>
-
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: "0.875rem",
-                    fontWeight: "600",
-                    color: "white",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  Tipo de Card
-                </label>
-                <select
-                  value={cardType}
-                  onChange={(e) => setCardType(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem",
-                    borderRadius: "0.5rem",
-                    border: "1px solid rgba(75, 85, 99, 0.3)",
-                    background: "rgba(17, 24, 39, 0.5)",
-                    color: "white",
-                    fontSize: "1rem",
-                  }}
-                >
-                  <option value="repos" style={{ background: "#1f2937" }}>
-                    📊 Estatísticas dos Repositórios
-                  </option>
-                  <option value="repos-list" style={{ background: "#1f2937" }}>
-                    📋 Lista de Repositórios
-                  </option>
-                </select>
               </div>
 
               <div>
@@ -461,7 +426,7 @@ export default function ReposPage() {
                     wordBreak: "break-all",
                   }}
                 >
-                  {`![GitHub Repositories](https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos&theme=${theme}&language=${language}&showBorder=${showBorder})`}
+                  {`![GitHub Repositories](https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder})`}
                 </code>
               </div>
             </div>
@@ -494,7 +459,7 @@ export default function ReposPage() {
                     wordBreak: "break-all",
                   }}
                 >
-                  {`<img src="https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos&theme=${theme}&language=${language}&showBorder=${showBorder}" alt="GitHub Repositories" />`}
+                  {`<img src="https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}" alt="GitHub Repositories" />`}
                 </code>
               </div>
             </div>
@@ -527,7 +492,7 @@ export default function ReposPage() {
                     wordBreak: "break-all",
                   }}
                 >
-                  {`https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos&theme=${theme}&language=${language}&showBorder=${showBorder}`}
+                  {`https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}`}
                 </code>
               </div>
             </div>
@@ -607,9 +572,7 @@ export default function ReposPage() {
                     type
                   </td>
                   <td style={{ padding: "0.5rem" }}>Tipo de card</td>
-                  <td style={{ padding: "0.5rem" }}>
-                    stats, repos, repos-list
-                  </td>
+                  <td style={{ padding: "0.5rem" }}>stats, repos-list</td>
                   <td style={{ padding: "0.5rem" }}>stats</td>
                 </tr>
                 <tr style={{ borderBottom: "1px solid rgba(75, 85, 99, 0.1)" }}>

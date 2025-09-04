@@ -201,7 +201,7 @@ export function generateReposListSVG(
     return text.substring(0, maxLength - 3) + "...";
   };
 
-  // Usar repositórios reais se disponíveis, senão usar os mais estrelados das estatísticas
+  // Usar repositórios reais se disponíveis, senão deixar vazio
   let reposToShow = [];
 
   if (repos && repos.length > 0) {
@@ -220,47 +220,8 @@ export function generateReposListSVG(
         created_at: repo.created_at,
         private: repo.private,
       }));
-  } else {
-    // Fallback para repositórios simulados se não houver dados reais
-    reposToShow = [
-      {
-        name: `${repoStats.username}/awesome-project`,
-        description: "An awesome project with great features and documentation",
-        language: repoStats.mostUsedLanguage || "JavaScript",
-        stars: Math.floor(repoStats.totalStars / 3),
-        forks: Math.floor(repoStats.totalForks / 3),
-        updated_at: new Date().toISOString(),
-        created_at: new Date(
-          Date.now() - 30 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        private: false,
-      },
-      {
-        name: `${repoStats.username}/cool-library`,
-        description: "A cool library that makes development easier",
-        language: repoStats.languages[1]?.name || "TypeScript",
-        stars: Math.floor(repoStats.totalStars / 4),
-        forks: Math.floor(repoStats.totalForks / 4),
-        updated_at: new Date().toISOString(),
-        created_at: new Date(
-          Date.now() - 60 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        private: false,
-      },
-      {
-        name: `${repoStats.username}/utility-tool`,
-        description: "A utility tool for common tasks",
-        language: repoStats.languages[2]?.name || "Python",
-        stars: Math.floor(repoStats.totalStars / 5),
-        forks: Math.floor(repoStats.totalForks / 5),
-        updated_at: new Date().toISOString(),
-        created_at: new Date(
-          Date.now() - 90 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-        private: false,
-      },
-    ].slice(0, 5);
   }
+  // Se não houver repositórios, reposToShow permanece vazio
 
   // Gerar SVG
   const svg = `
@@ -576,16 +537,16 @@ export function generateReposListSVG(
     <rect x="40" y="30" width="520" height="60" fill="${
       currentTheme.cardBg
     }" rx="8"/>
-         <text x="60" y="55" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="bold" fill="${
-           currentTheme.primary
-         }">
-       📁 ${t.title}
-     </text>
-     <text x="60" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="${
-       currentTheme.text
-     }">
-       @${repoStats.username} • ${repoStats.totalRepos} ${t.totalRepos}
-     </text>
+    <text x="300" y="55" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="bold" fill="${
+      currentTheme.primary
+    }" text-anchor="middle">
+      📁 ${t.title}
+    </text>
+    <text x="300" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="${
+      currentTheme.text
+    }" text-anchor="middle">
+      @${repoStats.username} • ${repoStats.totalRepos} ${t.totalRepos}
+    </text>
   </g>
   
   <!-- Stats Summary -->
@@ -593,87 +554,95 @@ export function generateReposListSVG(
     <rect x="40" y="100" width="520" height="40" fill="${
       currentTheme.cardBg
     }" rx="8" opacity="0.8"/>
-         <text x="300" y="122" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="${
+         <text x="300" y="116" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="${
            currentTheme.text
          }" text-anchor="middle">
        ⭐ ${formatNumber(repoStats.totalStars)} ${t.stars} • 🍴 ${formatNumber(
     repoStats.totalForks
   )} ${t.forks} • 👀 ${formatNumber(repoStats.totalWatchers)} watchers
      </text>
-     <text x="300" y="138" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="${
+     <text x="300" y="135" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="${
        currentTheme.text
      }" text-anchor="middle">
-       🏷️ ${repoStats.languages.length} ${t.language}s${
-    repoStats.accountAge > 0
-      ? ` • 📅 ${Math.floor(repoStats.accountAge / 365)} anos no GitHub`
-      : ""
-  }
+       🏷️ ${repoStats.languages.length} ${t.language}s
      </text>
   </g>
   
   <!-- Repositories List -->
   <g transform="translate(40, 150)">
-    ${reposToShow
-      .map(
-        (repo, index) => `
-      <g transform="translate(0, ${index * 40})">
-        <!-- Repository Card -->
-        <rect x="0" y="0" width="520" height="35" fill="${
-          currentTheme.cardBg
-        }" rx="6" stroke="${currentTheme.border}" stroke-width="1"/>
-        
-        <!-- Repository Icon -->
-        <rect x="8" y="8" width="20" height="20" fill="${
-          currentTheme.primary
-        }" rx="4"/>
-        <text x="18" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="white" text-anchor="middle">📁</text>
-        
-                 <!-- Repository Name -->
-         <text x="35" y="16" font-family="system-ui, -apple-system, sans-serif" font-size="15" font-weight="600" fill="${
-           currentTheme.primary
-         }">
-           ${truncateText(repo.name, 35)}
-         </text>
-         
-         <!-- Repository Description -->
-         <text x="35" y="30" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="${
-           currentTheme.text
-         }">
-           ${truncateText(repo.description, 50)}
-         </text>
-        
-        <!-- Language -->
-        <circle cx="410" cy="12" r="4" fill="${getLanguageColor(
-          repo.language
-        )}"/>
-                 <text x="420" y="17" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="${
-                   currentTheme.text
-                 }">
-           ${repo.language}
-         </text>
-         
-         <!-- Stars -->
-         <text x="480" y="17" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="${
-           currentTheme.text
-         }">
-           ⭐ ${formatNumber(repo.stars)}
-         </text>
-         
-         <!-- Forks -->
-         <text x="480" y="30" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="${
-           currentTheme.text
-         }">
-           🍴 ${formatNumber(repo.forks)}
-         </text>
-      </g>
-    `
-      )
-      .join("")}
+    ${
+      reposToShow.length > 0
+        ? reposToShow
+            .map(
+              (repo, index) => `
+        <g transform="translate(0, ${index * 45})">
+          <!-- Repository Card -->
+          <rect x="0" y="0" width="520" height="35" fill="${
+            currentTheme.cardBg
+          }" rx="6" stroke="${currentTheme.border}" stroke-width="1"/>
+          
+          <!-- Repository Icon -->    
+          <text x="18" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="17" fill="white" text-anchor="middle">📁</text>
+          
+                                     <!-- Repository Name -->
+            <text x="35" y="16" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="600" fill="${
+              currentTheme.primary
+            }">
+              ${truncateText(repo.name.split("/").pop() || repo.name, 35)}
+            </text>
+            
+            <!-- Repository Description -->
+            <text x="35" y="30" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="${
+              currentTheme.text
+            }">
+              ${truncateText(repo.description, 55)}
+            </text>
+          
+          <!-- Language -->
+          <circle cx="380" cy="16" r="5" fill="${getLanguageColor(
+            repo.language
+          )}"/>
+                    <text x="390" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="${
+                      currentTheme.text
+                    }">
+              ${repo.language}
+            </text>
+            
+            <!-- Stars -->
+            <text x="450" y="14" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="${
+              currentTheme.text
+            }">
+              ⭐ ${formatNumber(repo.stars)}
+            </text>
+            
+            <!-- Forks -->
+            <text x="450" y="30" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="${
+              currentTheme.text
+            }">
+              🍴 ${formatNumber(repo.forks)}
+            </text>
+        </g>
+      `
+            )
+            .join("")
+        : `
+        <!-- No Repositories Message -->
+        <g transform="translate(0, 50)">
+          <rect x="0" y="0" width="520" height="100" fill="${currentTheme.cardBg}" rx="8" stroke="${currentTheme.border}" stroke-width="1"/>
+          <text x="260" y="45" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600" fill="${currentTheme.text}" text-anchor="middle">
+            📭 Nenhum repositório encontrado
+          </text>
+          <text x="260" y="70" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="${currentTheme.text}" text-anchor="middle">
+            Este usuário ainda não possui repositórios públicos
+          </text>
+        </g>
+      `
+    }
   </g>
   
   <!-- Footer -->
   <g transform="translate(40, 370)">
-    <text x="0" y="0" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="${
+    <text x="0" y="9" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="${
       currentTheme.text
     }">
       Gerado em ${new Date().toLocaleDateString(

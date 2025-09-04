@@ -8,7 +8,6 @@ import {
   fetchGitHubRepos as fetchRepos,
   processRepoStats,
 } from "@/cards/github-repos/github-api";
-import { generateReposSVG } from "@/cards/github-repos/svg-generator";
 import { generateReposListSVG } from "@/cards/github-repos/svg-generator-list";
 
 export async function GET(request: NextRequest) {
@@ -17,22 +16,10 @@ export async function GET(request: NextRequest) {
   const theme = searchParams.get("theme") || "dark";
   const showBorder = searchParams.get("showBorder") !== "false";
   const language = searchParams.get("language") || "pt";
-  const cardType = searchParams.get("type") || "stats"; // "stats", "repos" ou "repos-list"
+  const cardType = searchParams.get("type") || "stats"; // "stats" ou "repos-list"
 
   try {
-    if (cardType === "repos") {
-      // Card de repositórios
-      const repos = await fetchRepos(username);
-      const repoStats = processRepoStats(repos, username);
-      const svg = generateReposSVG(repoStats, theme, language, showBorder);
-
-      return new Response(svg, {
-        headers: {
-          "Content-Type": "image/svg+xml",
-          "Cache-Control": "public, max-age=3600, s-maxage=3600",
-        },
-      });
-    } else if (cardType === "repos-list") {
+    if (cardType === "repos-list") {
       // Card de lista de repositórios
       const repos = await fetchRepos(username);
       const repoStats = processRepoStats(repos, username);
@@ -106,46 +93,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error generating stats:", error);
 
-    if (cardType === "repos") {
-      // Erro para card de repositórios
-      const errorRepoStats = {
-        username: username,
-        totalRepos: 0,
-        totalStars: 0,
-        totalForks: 0,
-        totalWatchers: 0,
-        totalSize: 0,
-        languages: [],
-        mostStarred: null,
-        recentlyUpdated: null,
-        oldestRepo: null,
-        newestRepo: null,
-        reposWithIssues: 0,
-        reposWithWiki: 0,
-        reposWithPages: 0,
-        publicRepos: 0,
-        privateRepos: 0,
-        forkedRepos: 0,
-        originalRepos: 0,
-        averageRepoSize: 0,
-        mostUsedLanguage: null,
-        accountAge: 0,
-      };
-
-      const errorSVG = generateReposSVG(
-        errorRepoStats,
-        theme,
-        language,
-        showBorder
-      );
-
-      return new Response(errorSVG, {
-        headers: {
-          "Content-Type": "image/svg+xml",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-        },
-      });
-    } else if (cardType === "repos-list") {
+    if (cardType === "repos-list") {
       // Erro para card de lista de repositórios
       const errorRepoStats = {
         username: username,

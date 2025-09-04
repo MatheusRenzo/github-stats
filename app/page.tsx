@@ -199,7 +199,7 @@ export default function Home() {
                 border: "2px solid rgba(75, 85, 99, 0.3)",
               }}
             >
-              📁 Estatísticas dos Repositórios
+              📁 Lista de Repositórios
             </Link>
           </div>
         </div>
