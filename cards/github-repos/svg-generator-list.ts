@@ -202,7 +202,16 @@ export function generateReposListSVG(
   };
 
   // Usar repositórios reais se disponíveis, senão deixar vazio
-  let reposToShow = [];
+  let reposToShow: Array<{
+    name: string;
+    description: string;
+    language: string;
+    stars: number;
+    forks: number;
+    updated_at: string;
+    created_at: string;
+    private: boolean;
+  }> = [];
 
   if (repos && repos.length > 0) {
     // Filtrar repositórios (remover forks se necessário) e ordenar por estrelas
