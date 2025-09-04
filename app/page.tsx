@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const [username, setUsername] = useState("MatheusRenzo");
@@ -10,7 +13,6 @@ export default function Home() {
 
   const [svgUrl, setSvgUrl] = useState("");
   const [cleanUrl, setCleanUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
@@ -22,12 +24,10 @@ export default function Home() {
   };
 
   const generateStats = async () => {
-    setIsLoading(true);
     const newCleanUrl = generateCleanUrl();
     const urlWithTimestamp = `${newCleanUrl}&t=${Date.now()}`;
     setCleanUrl(newCleanUrl);
     setSvgUrl(urlWithTimestamp);
-    setIsLoading(false);
   };
 
   const showNotificationMessage = (message: string) => {
@@ -56,7 +56,17 @@ export default function Home() {
   }, [username, theme, showBorder, language]);
 
   return (
-    <div style={{ minHeight: "100vh", position: "relative" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)",
+        fontFamily: "system-ui, -apple-system, sans-serif",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <Header />
       {/* Animated background */}
       <div
         style={{
@@ -123,29 +133,8 @@ export default function Home() {
         className="container"
         style={{ position: "relative", zIndex: 10, padding: "2rem 1rem" }}
       >
-        {/* Header */}
-        <header style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "4rem",
-              height: "4rem",
-              background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
-              borderRadius: "50%",
-              marginBottom: "1.5rem",
-              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)",
-            }}
-          >
-            <svg
-              style={{ width: "2rem", height: "2rem", color: "white" }}
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-            </svg>
-          </div>
+        {/* Hero Section */}
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
           <h1
             style={{
               fontSize: "3rem",
@@ -171,16 +160,58 @@ export default function Home() {
             Gere estatísticas gamificadas do GitHub com sistema de níveis e
             escudos únicos
           </p>
-        </header>
+
+          {/* Card Type Selection */}
+          <div
+            style={{
+              marginTop: "2rem",
+              display: "flex",
+              justifyContent: "center",
+              gap: "1rem",
+              flexWrap: "wrap",
+            }}
+          >
+            <Link
+              href="/"
+              style={{
+                padding: "0.75rem 1.5rem",
+                borderRadius: "0.5rem",
+                background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+                color: "white",
+                textDecoration: "none",
+                fontWeight: "600",
+                transition: "all 0.2s ease",
+                border: "2px solid transparent",
+              }}
+            >
+              📊 Estatísticas do Usuário
+            </Link>
+            <Link
+              href="/repos"
+              style={{
+                padding: "0.75rem 1.5rem",
+                borderRadius: "0.5rem",
+                background: "rgba(17, 24, 39, 0.5)",
+                color: "white",
+                textDecoration: "none",
+                fontWeight: "600",
+                transition: "all 0.2s ease",
+                border: "2px solid rgba(75, 85, 99, 0.3)",
+              }}
+            >
+              📁 Estatísticas dos Repositórios
+            </Link>
+          </div>
+        </div>
 
         {/* Main Controls */}
         <div className="card" style={{ marginBottom: "2rem" }}>
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
               gap: "1.5rem",
-              marginBottom: "1.5rem",
+              marginBottom: "2rem",
             }}
           >
             <div>
@@ -189,46 +220,27 @@ export default function Home() {
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "600",
-                  color: "#d1d5db",
+                  color: "white",
                   marginBottom: "0.5rem",
                 }}
               >
                 Username do GitHub
               </label>
-              <div style={{ position: "relative" }}>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="input"
-                  placeholder="Digite o username"
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    right: "0.75rem",
-                    transform: "translateY(-50%)",
-                    pointerEvents: "none",
-                  }}
-                >
-                  <svg
-                    style={{
-                      width: "1.25rem",
-                      height: "1.25rem",
-                      color: "#9ca3af",
-                    }}
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-              </div>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Digite seu username"
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  borderRadius: "0.5rem",
+                  border: "1px solid rgba(75, 85, 99, 0.3)",
+                  background: "rgba(17, 24, 39, 0.5)",
+                  color: "white",
+                  fontSize: "1rem",
+                }}
+              />
             </div>
 
             <div>
@@ -237,7 +249,7 @@ export default function Home() {
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "600",
-                  color: "#d1d5db",
+                  color: "white",
                   marginBottom: "0.5rem",
                 }}
               >
@@ -246,15 +258,22 @@ export default function Home() {
               <select
                 value={theme}
                 onChange={(e) => setTheme(e.target.value)}
-                className="input"
-                style={{ appearance: "none", cursor: "pointer" }}
+                style={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  borderRadius: "0.5rem",
+                  border: "1px solid rgba(75, 85, 99, 0.3)",
+                  background: "rgba(17, 24, 39, 0.5)",
+                  color: "white",
+                  fontSize: "1rem",
+                }}
               >
-                <option value="dark">🌙 Dark</option>
-                <option value="light">☀️ Light</option>
-                <option value="radical">🎨 Radical</option>
-                <option value="neon">⚡ Neon</option>
-                <option value="cyber">🤖 Cyber</option>
-                <option value="tanjiro">🔥 Tanjiro</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="dracula">Dracula</option>
+                <option value="nord">Nord</option>
+                <option value="gruvbox">Gruvbox</option>
+                <option value="monokai">Monokai</option>
               </select>
             </div>
 
@@ -264,7 +283,7 @@ export default function Home() {
                   display: "block",
                   fontSize: "0.875rem",
                   fontWeight: "600",
-                  color: "#d1d5db",
+                  color: "white",
                   marginBottom: "0.5rem",
                 }}
               >
@@ -273,614 +292,151 @@ export default function Home() {
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="input"
-                style={{ appearance: "none", cursor: "pointer" }}
-              >
-                <option value="pt">🇧🇷 Português</option>
-                <option value="en">🇺🇸 English</option>
-              </select>
-            </div>
-
-            <div>
-              <label
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  color: "#d1d5db",
-                  cursor: "pointer",
+                  width: "100%",
+                  padding: "0.75rem",
+                  borderRadius: "0.5rem",
+                  border: "1px solid rgba(75, 85, 99, 0.3)",
+                  background: "rgba(17, 24, 39, 0.5)",
+                  color: "white",
+                  fontSize: "1rem",
                 }}
               >
-                <input
-                  type="checkbox"
-                  checked={showBorder}
-                  onChange={(e) => setShowBorder(e.target.checked)}
-                  style={{
-                    width: "1rem",
-                    height: "1rem",
-                    accentColor: "#3b82f6",
-                  }}
-                />
-                Mostrar Borda
-              </label>
+                <option value="pt">Português</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="ja">日本語</option>
+              </select>
             </div>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "1rem",
+              marginBottom: "2rem",
+            }}
+          >
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                color: "white",
+                cursor: "pointer",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={showBorder}
+                onChange={(e) => setShowBorder(e.target.checked)}
+                style={{ margin: 0 }}
+              />
+              Mostrar borda
+            </label>
           </div>
 
           <button
             onClick={generateStats}
-            disabled={isLoading || !username.trim()}
-            className="btn btn-primary"
+            disabled={!username}
             style={{
               width: "100%",
-              padding: "1rem 1.5rem",
-              fontSize: "1rem",
-              opacity: isLoading || !username.trim() ? 0.5 : 1,
-              cursor: isLoading || !username.trim() ? "not-allowed" : "pointer",
+              padding: "1rem",
+              borderRadius: "0.5rem",
+              border: "none",
+              background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+              color: "white",
+              fontSize: "1.125rem",
+              fontWeight: "600",
+              cursor: !username ? "not-allowed" : "pointer",
+              opacity: !username ? 0.6 : 1,
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              if (username) {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow =
+                  "0 10px 25px rgba(59, 130, 246, 0.3)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "none";
             }}
           >
-            {isLoading ? (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <svg
-                  style={{
-                    width: "1.25rem",
-                    height: "1.25rem",
-                    marginRight: "0.75rem",
-                    animation: "spin 1s linear infinite",
-                  }}
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    style={{ opacity: 0.25 }}
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    style={{ opacity: 0.75 }}
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Gerando...
-              </div>
-            ) : (
-              "Gerar Estatísticas"
-            )}
+            Gerar Estatísticas
           </button>
         </div>
 
-        {/* Generated Card Display */}
-        {cleanUrl && (
+        {/* Generated Stats */}
+        {svgUrl && (
           <div className="card" style={{ marginBottom: "2rem" }}>
+            <h2
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                color: "white",
+                marginBottom: "1rem",
+                textAlign: "center",
+              }}
+            >
+              Seu Escudo GitHub
+            </h2>
             <div
               style={{
                 display: "flex",
-                flexDirection: "column",
-                gap: "1rem",
-                marginBottom: "1.5rem",
+                justifyContent: "center",
+                marginBottom: "2rem",
               }}
             >
-              <div>
-                <h2
-                  style={{
-                    fontSize: "1.5rem",
-                    fontWeight: "bold",
-                    color: "white",
-                    marginBottom: "0.5rem",
-                  }}
-                >
-                  GitHub Stats Gamificadas
-                </h2>
-                <p style={{ color: "#9ca3af" }}>
-                  Card gamificado gerado com sucesso! Veja seu nível e escudo
-                  únicos.
-                </p>
-              </div>
-              <button
-                onClick={copyUrl}
-                className={copied ? "btn btn-secondary" : "btn btn-secondary"}
-                style={{
-                  alignSelf: "flex-start",
-                  padding: "0.75rem 1.5rem",
-                  fontSize: "0.875rem",
-                }}
-              >
-                {copied ? (
-                  <>
-                    <svg
-                      style={{
-                        width: "1rem",
-                        height: "1rem",
-                        marginRight: "0.5rem",
-                      }}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Copiado!
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      style={{
-                        width: "1rem",
-                        height: "1rem",
-                        marginRight: "0.5rem",
-                      }}
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                      <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
-                    </svg>
-                    Copiar URL
-                  </>
-                )}
-              </button>
-            </div>
-
-            <div
-              style={{
-                background: "rgba(17, 24, 39, 0.5)",
-                borderRadius: "0.75rem",
-                padding: "1.5rem",
-                border: "1px solid rgba(75, 85, 99, 0.3)",
-                overflow: "auto",
-                marginBottom: "1.5rem",
-              }}
-            >
-              <iframe
+              <img
                 src={svgUrl}
+                alt="GitHub Stats"
                 style={{
-                  width: "100%",
-                  height: "220px",
-                  border: "none",
-                  display: "block",
-                  boxShadow: "0 25px 50px rgba(0, 0, 0, 0.5)",
+                  maxWidth: "100%",
+                  height: "auto",
                   borderRadius: "0.5rem",
-                }}
-                title="GitHub Stats"
-                onError={(e) => {
-                  alert(
-                    "Erro ao carregar as estatísticas. Verifique se o username existe e se as variáveis de ambiente estão configuradas."
-                  );
+                  boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)",
+                  opacity: 1,
+                  transition: "none",
+                  animation: "none",
                 }}
               />
             </div>
 
             <div
               style={{
-                padding: "1rem",
-                background: "rgba(55, 65, 81, 0.3)",
-                borderRadius: "0.75rem",
-                border: "1px solid rgba(75, 85, 99, 0.3)",
+                display: "flex",
+                gap: "1rem",
+                justifyContent: "center",
+                flexWrap: "wrap",
               }}
             >
-              <p
+              <button
+                onClick={copyUrl}
+                disabled={copied}
                 style={{
-                  fontSize: "0.875rem",
-                  color: "#d1d5db",
-                  marginBottom: "0.75rem",
-                  fontWeight: "600",
-                }}
-              >
-                URL da imagem:
-              </p>
-              <div
-                style={{
-                  background: "rgba(17, 24, 39, 0.5)",
+                  padding: "0.75rem 1.5rem",
                   borderRadius: "0.5rem",
-                  padding: "0.75rem",
-                  border: "1px solid rgba(75, 85, 99, 0.3)",
+                  border: "1px solid rgba(16, 185, 129, 0.3)",
+                  background: copied
+                    ? "rgba(16, 185, 129, 0.2)"
+                    : "rgba(16, 185, 129, 0.1)",
+                  color: "#10b981",
+                  fontSize: "0.875rem",
+                  fontWeight: "500",
+                  cursor: copied ? "not-allowed" : "pointer",
+                  transition: "all 0.2s ease",
                 }}
               >
-                <code
-                  style={{
-                    fontSize: "0.875rem",
-                    color: "#10b981",
-                    wordBreak: "break-all",
-                    fontFamily: "monospace",
-                  }}
-                >
-                  {`${window.location.origin}${cleanUrl}`}
-                </code>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Features */}
-        <div className="card" style={{ marginBottom: "2rem" }}>
-          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-            <h2
-              style={{
-                fontSize: "1.875rem",
-                fontWeight: "bold",
-                color: "white",
-                marginBottom: "1rem",
-              }}
-            >
-              ✨ Funcionalidades
-            </h2>
-            <p
-              style={{
-                color: "#9ca3af",
-                fontSize: "1.125rem",
-              }}
-            >
-              Todas as opções disponíveis na API com sistema gamificado
-            </p>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-              gap: "1.5rem",
-            }}
-          >
-            <div
-              style={{
-                background: "rgba(17, 24, 39, 0.3)",
-                borderRadius: "0.75rem",
-                padding: "1.5rem",
-                border: "1px solid rgba(75, 85, 99, 0.3)",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: "600",
-                  color: "white",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                🌍 Idiomas
-              </h3>
-              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
-                <li>🇧🇷 Português (pt)</li>
-                <li>🇺🇸 English (en)</li>
-              </ul>
+                {copied ? "✓ Copiado!" : "📋 Copiar URL"}
+              </button>
             </div>
 
-            <div
-              style={{
-                background: "rgba(17, 24, 39, 0.3)",
-                borderRadius: "0.75rem",
-                padding: "1.5rem",
-                border: "1px solid rgba(75, 85, 99, 0.3)",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: "600",
-                  color: "white",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                🎨 Temas
-              </h3>
-              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
-                <li>🌙 Dark - Tema escuro clássico</li>
-                <li>☀️ Light - Tema claro e limpo</li>
-                <li>🎨 Radical - Cores vibrantes e contrastantes</li>
-                <li>⚡ Neon - Efeitos neon e brilhantes</li>
-                <li>🤖 Cyber - Estilo cyberpunk futurista</li>
-              </ul>
-            </div>
-
-            <div
-              style={{
-                background: "rgba(17, 24, 39, 0.3)",
-                borderRadius: "0.75rem",
-                padding: "1.5rem",
-                border: "1px solid rgba(75, 85, 99, 0.3)",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: "600",
-                  color: "white",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                🎨 Visual
-              </h3>
-              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
-                <li>🛡️ Escudos baseados em nível</li>
-                <li>✨ Bordas animadas por tema</li>
-                <li>🎮 Sistema de níveis gamificado</li>
-                <li>🏆 Títulos épicos personalizados</li>
-                <li>📊 Barra de progresso dinâmica</li>
-                <li>🎨 Efeitos visuais únicos</li>
-              </ul>
-            </div>
-
-            <div
-              style={{
-                background: "rgba(17, 24, 39, 0.3)",
-                borderRadius: "0.75rem",
-                padding: "1.5rem",
-                border: "1px solid rgba(75, 85, 99, 0.3)",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: "600",
-                  color: "white",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                🎯 Características Especiais
-              </h3>
-              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
-                <li>🎮 Sistema de níveis gamificado</li>
-                <li>🛡️ Escudos únicos por nível</li>
-                <li>✨ Animações e efeitos visuais</li>
-                <li>📊 Barra de progresso dinâmica</li>
-                <li>🏆 Títulos épicos personalizados</li>
-                <li>🎨 Bordas animadas por tema</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Level System */}
-        <div className="card" style={{ marginBottom: "2rem" }}>
-          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-            <h2
-              style={{
-                fontSize: "1.875rem",
-                fontWeight: "bold",
-                color: "white",
-                marginBottom: "1rem",
-              }}
-            >
-              🎮 Sistema de Níveis Gamificado
-            </h2>
-            <p
-              style={{
-                color: "#9ca3af",
-                fontSize: "1.125rem",
-                maxWidth: "48rem",
-                margin: "0 auto",
-                lineHeight: "1.6",
-              }}
-            >
-              Seu progresso no GitHub é transformado em um sistema de níveis
-              épico com escudos únicos!
-            </p>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-              gap: "1.5rem",
-            }}
-          >
-            <div
-              style={{
-                background: "rgba(17, 24, 39, 0.3)",
-                borderRadius: "0.75rem",
-                padding: "1.5rem",
-                border: "1px solid rgba(75, 85, 99, 0.3)",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: "600",
-                  color: "white",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                🏆 Como Funciona
-              </h3>
-              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
-                <li>
-                  • Baseado na média de estrelas, repositórios e seguidores
-                </li>
-                <li>• 5000 níveis únicos disponíveis</li>
-                <li>• Progressão exponencial para desafio</li>
-                <li>• Títulos épicos a cada 5 níveis</li>
-                <li>• Escudos únicos por faixa de nível</li>
-              </ul>
-            </div>
-
-            <div
-              style={{
-                background: "rgba(17, 24, 39, 0.3)",
-                borderRadius: "0.75rem",
-                padding: "1.5rem",
-                border: "1px solid rgba(75, 85, 99, 0.3)",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: "600",
-                  color: "white",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                🛡️ Escudos por Nível
-              </h3>
-              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
-                <li>• Bronze (1-35): Escudos básicos</li>
-                <li>• Prata (36-100): Com brilho interno</li>
-                <li>• Ouro (101-200): Efeitos dourados</li>
-                <li>• Platina (201-500): Animações avançadas</li>
-                <li>• Diamante (501-1000): Partículas mágicas</li>
-                <li>• Lendário (1001-5000): Efeitos cósmicos</li>
-              </ul>
-            </div>
-
-            <div
-              style={{
-                background: "rgba(17, 24, 39, 0.3)",
-                borderRadius: "0.75rem",
-                padding: "1.5rem",
-                border: "1px solid rgba(75, 85, 99, 0.3)",
-              }}
-            >
-              <h3
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: "600",
-                  color: "white",
-                  marginBottom: "1rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                }}
-              >
-                ⭐ Títulos Épicos
-              </h3>
-              <ul style={{ color: "#d1d5db", lineHeight: "1.6" }}>
-                <li>• APRENDIZ → MAGO → ARQUIMAGO</li>
-                <li>• MESTRE DOS MAGOS → REI DOS MAGOS</li>
-                <li>• DEUS DA MAGIA → SUPREMO MÁGICO</li>
-                <li>• CÓSMICO MÁGICO → UNIVERSAL MÁGICO</li>
-                <li>• MÁGICO SUPREMO UNIVERSAL (Nível 5000)</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* How to Use */}
-        <div className="card">
-          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-            <h2
-              style={{
-                fontSize: "1.875rem",
-                fontWeight: "bold",
-                color: "white",
-                marginBottom: "1rem",
-              }}
-            >
-              Como Usar
-            </h2>
-            <p
-              style={{
-                color: "#9ca3af",
-                fontSize: "1.125rem",
-              }}
-            >
-              Siga estes passos para integrar o card em seu projeto
-            </p>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-              gap: "2rem",
-            }}
-          >
-            <div>
-              <h3
-                style={{
-                  fontSize: "1.25rem",
-                  fontWeight: "600",
-                  color: "white",
-                  marginBottom: "1rem",
-                }}
-              >
-                Passos:
-              </h3>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "1rem",
-                }}
-              >
-                {[
-                  "Digite um username válido do GitHub",
-                  "Escolha um tema e idioma",
-                  'Clique em "Gerar Estatísticas"',
-                  "Veja seu nível e escudo únicos gerados",
-                  "Use a URL gerada em seu README.md",
-                ].map((step, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: "1rem",
-                    }}
-                  >
-                    <div
-                      style={{
-                        flexShrink: 0,
-                        width: "2rem",
-                        height: "2rem",
-                        background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "white",
-                        fontWeight: "bold",
-                        fontSize: "0.875rem",
-                      }}
-                    >
-                      {index + 1}
-                    </div>
-                    <p
-                      style={{
-                        color: "#d1d5db",
-                        lineHeight: "1.6",
-                        paddingTop: "0.25rem",
-                      }}
-                    >
-                      {step}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
+            <div style={{ marginTop: "2rem" }}>
               <h3
                 style={{
                   fontSize: "1.25rem",
@@ -931,57 +487,61 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* Notification Toast */}
-      {showNotification && (
-        <div
-          style={{
-            position: "fixed",
-            top: "1rem",
-            right: "1rem",
-            zIndex: 50,
-          }}
-          className="animate-in slide-in-from-right-2"
-        >
+        {/* Notification Toast */}
+        {showNotification && (
           <div
             style={{
-              padding: "1rem 1.5rem",
-              borderRadius: "0.75rem",
-              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)",
-              border: "1px solid #10b981",
-              background: "rgba(16, 185, 129, 0.9)",
+              position: "fixed",
+              top: "1rem",
+              right: "1rem",
+              zIndex: 50,
+              background: "rgba(17, 24, 39, 0.95)",
               color: "white",
+              padding: "1rem 1.5rem",
+              borderRadius: "0.5rem",
+              border: "1px solid rgba(75, 85, 99, 0.3)",
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.3)",
+              backdropFilter: "blur(10px)",
             }}
           >
-            <div
-              style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
-            >
-              <svg
-                style={{ width: "1.25rem", height: "1.25rem" }}
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span style={{ fontWeight: "500" }}>{notificationMessage}</span>
-            </div>
+            {notificationMessage}
           </div>
-        </div>
-      )}
+        )}
+      </div>
+
+      <Footer />
 
       <style jsx>{`
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
+        @keyframes blob {
+          0%,
+          100% {
+            transform: translate(0px, 0px) scale(1);
           }
-          to {
-            transform: rotate(360deg);
+          33% {
+            transform: translate(30px, -50px) scale(1.1);
+          }
+          66% {
+            transform: translate(-20px, 20px) scale(0.9);
+          }
+        }
+
+        .card {
+          background: rgba(17, 24, 39, 0.5);
+          border: 1px solid rgba(75, 85, 99, 0.3);
+          border-radius: 1rem;
+          padding: 2rem;
+          backdrop-filter: blur(10px);
+        }
+
+        @media (max-width: 768px) {
+          .card {
+            padding: 1.5rem;
+          }
+
+          h1 {
+            font-size: 2rem !important;
           }
         }
       `}</style>

@@ -1732,7 +1732,6 @@ export function generateStatsSVG(
         .header {
           font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif;
           fill: ${currentTheme.text};
-          animation: fadeInAnimation 0.8s ease-in-out forwards;
         }
         @supports(-moz-appearance: auto) {
           .header { font-size: 15.5px; }
@@ -1776,15 +1775,6 @@ export function generateStatsSVG(
         
         .bold { font-weight: 700 }
         .icon { fill: ${currentTheme.primary}; }
-        .stagger {
-          opacity: 0;
-          animation: fadeInAnimation 0.3s ease-in-out forwards;
-        }
-        
-        @keyframes fadeInAnimation {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
         
         .blink {
           animation: blink 2s ease-in-out infinite;
@@ -2202,7 +2192,7 @@ export function generateStatsSVG(
       <g data-testid="main-card-body" transform="translate(0, 70)">
         <svg data-testid="lang-items" x="50">
           <!-- Stars -->
-          <g class="stagger" style="animation-delay: 450ms" transform="translate(0, 0)">
+          <g transform="translate(0, 0)">
             <g class="icon-container" transform="translate(0, -1)">
               <circle cx="8" cy="8" r="9" fill="${
                 currentTheme.primary
@@ -2225,7 +2215,7 @@ export function generateStatsSVG(
           </g>
           
           <!-- Repositories -->
-          <g class="stagger" style="animation-delay: 600ms" transform="translate(0, 25)">
+          <g transform="translate(0, 25)">
             <g class="icon-container" transform="translate(0, -1)">
               <circle cx="8" cy="8" r="9" fill="${
                 currentTheme.secondary
@@ -2248,7 +2238,7 @@ export function generateStatsSVG(
           </g>
         
         <!-- Forks -->
-          <g class="stagger" style="animation-delay: 750ms" transform="translate(0, 50)">
+          <g transform="translate(0, 50)">
             <g class="icon-container" transform="translate(0, -1)">
               <circle cx="8" cy="8" r="9" fill="${
                 currentTheme.accent
@@ -2271,7 +2261,7 @@ export function generateStatsSVG(
           </g>
           
           <!-- Followers -->
-          <g class="stagger" style="animation-delay: 900ms" transform="translate(0, 75)">
+          <g transform="translate(0, 75)">
             <g class="icon-container" transform="translate(0, -1)">
               <circle cx="8" cy="8" r="9" fill="${
                 currentTheme.primary
@@ -2294,7 +2284,7 @@ export function generateStatsSVG(
           </g>
         
         <!-- Top Languages -->
-          <g class="stagger" style="animation-delay: 1050ms" transform="translate(0, 100)">
+          <g transform="translate(0, 100)">
             <g class="icon-container" transform="translate(0, -1)">
               <circle cx="8" cy="8" r="9" fill="${
                 currentTheme.secondary

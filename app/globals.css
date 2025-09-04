@@ -41,10 +41,7 @@ body {
   animation-delay: 4s;
 }
 
-/* Smooth transitions */
-* {
-  transition: all 0.2s ease;
-}
+/* Smooth transitions - removed global transition to prevent unwanted entrance effects */
 
 /* Notification animations */
 @keyframes slide-in-from-right {
