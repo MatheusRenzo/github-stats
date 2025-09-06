@@ -116,7 +116,7 @@ export default function ReposPage() {
               backgroundClip: "text",
             }}
           >
-            GitHub Repositories List
+            GitHub Repositories Cards
           </h1>
           <p
             style={{
@@ -128,6 +128,7 @@ export default function ReposPage() {
             }}
           >
             Gere cards personalizados com listas dos seus repositórios do GitHub
+            - lista completa ou top 3 mais estrelados
           </p>
 
           {/* Card Type Selection */}
@@ -168,7 +169,7 @@ export default function ReposPage() {
                 border: "2px solid transparent",
               }}
             >
-              📁 Lista de Repositórios
+              📁 Cards de Repositórios
             </a>
           </div>
         </div>
@@ -260,6 +261,40 @@ export default function ReposPage() {
                       {themeName.charAt(0).toUpperCase() + themeName.slice(1)}
                     </option>
                   ))}
+                </select>
+              </div>
+
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "0.875rem",
+                    fontWeight: "600",
+                    color: "white",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Tipo de Card
+                </label>
+                <select
+                  value={cardType}
+                  onChange={(e) => setCardType(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    borderRadius: "0.5rem",
+                    border: "1px solid rgba(75, 85, 99, 0.3)",
+                    background: "rgba(17, 24, 39, 0.5)",
+                    color: "white",
+                    fontSize: "1rem",
+                  }}
+                >
+                  <option value="repos-list" style={{ background: "#1f2937" }}>
+                    📁 Cards de Repositórios (5 últimos)
+                  </option>
+                  <option value="top-repos" style={{ background: "#1f2937" }}>
+                    🏆 Top 3 Repositórios (mais estrelados)
+                  </option>
                 </select>
               </div>
 
@@ -572,7 +607,9 @@ export default function ReposPage() {
                     type
                   </td>
                   <td style={{ padding: "0.5rem" }}>Tipo de card</td>
-                  <td style={{ padding: "0.5rem" }}>stats, repos-list</td>
+                  <td style={{ padding: "0.5rem" }}>
+                    stats, repos-list, top-repos
+                  </td>
                   <td style={{ padding: "0.5rem" }}>stats</td>
                 </tr>
                 <tr style={{ borderBottom: "1px solid rgba(75, 85, 99, 0.1)" }}>

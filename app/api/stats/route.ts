@@ -8,7 +8,10 @@ import {
   fetchGitHubRepos as fetchRepos,
   processRepoStats,
 } from "@/cards/github-repos/github-api";
-import { generateReposListSVG } from "@/cards/github-repos/svg-generator-list";
+import {
+  generateReposListSVG,
+  generateTopReposSVG,
+} from "@/cards/github-repos/svg-generator-list";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -16,7 +19,7 @@ export async function GET(request: NextRequest) {
   const theme = searchParams.get("theme") || "dark";
   const showBorder = searchParams.get("showBorder") !== "false";
   const language = searchParams.get("language") || "pt";
-  const cardType = searchParams.get("type") || "stats"; // "stats" ou "repos-list"
+  const cardType = searchParams.get("type") || "stats"; // "stats", "repos-list" ou "top-repos"
 
   try {
     if (cardType === "repos-list") {
@@ -24,6 +27,24 @@ export async function GET(request: NextRequest) {
       const repos = await fetchRepos(username);
       const repoStats = processRepoStats(repos, username);
       const svg = generateReposListSVG(
+        repoStats,
+        repos,
+        theme,
+        language as "pt" | "en",
+        showBorder
+      );
+
+      return new Response(svg, {
+        headers: {
+          "Content-Type": "image/svg+xml",
+          "Cache-Control": "public, max-age=3600, s-maxage=3600",
+        },
+      });
+    } else if (cardType === "top-repos") {
+      // Card dos 3 repositórios mais estrelados
+      const repos = await fetchRepos(username);
+      const repoStats = processRepoStats(repos, username);
+      const svg = generateTopReposSVG(
         repoStats,
         repos,
         theme,
@@ -93,8 +114,8 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error generating stats:", error);
 
-    if (cardType === "repos-list") {
-      // Erro para card de lista de repositórios
+    if (cardType === "repos-list" || cardType === "top-repos") {
+      // Erro para card de lista de repositórios ou top repos
       const errorRepoStats = {
         username: username,
         totalRepos: 0,
@@ -119,13 +140,22 @@ export async function GET(request: NextRequest) {
         accountAge: 0,
       };
 
-      const errorSVG = generateReposListSVG(
-        errorRepoStats,
-        [],
-        theme,
-        language as "pt" | "en",
-        showBorder
-      );
+      const errorSVG =
+        cardType === "top-repos"
+          ? generateTopReposSVG(
+              errorRepoStats,
+              [],
+              theme,
+              language as "pt" | "en",
+              showBorder
+            )
+          : generateReposListSVG(
+              errorRepoStats,
+              [],
+              theme,
+              language as "pt" | "en",
+              showBorder
+            );
 
       return new Response(errorSVG, {
         headers: {
