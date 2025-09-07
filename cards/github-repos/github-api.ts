@@ -41,13 +41,15 @@ export async function fetchGitHubUser(username: string) {
 
 export function processRepoStats(
   repos: GitHubRepo[],
-  username: string
+  username: string,
+  totalPublicRepos?: number
 ): RepoStats {
   // Filtrar repositórios (remover forks se necessário)
   const filteredRepos = repos.filter((repo) => !repo.fork);
 
   // Calcular estatísticas básicas
-  const totalRepos = filteredRepos.length;
+  // Usar o total real de repositórios públicos se disponível, senão usar o número de repositórios filtrados
+  const totalRepos = totalPublicRepos !== undefined ? totalPublicRepos : filteredRepos.length;
   const totalStars = filteredRepos.reduce(
     (sum, repo) => sum + repo.stargazers_count,
     0

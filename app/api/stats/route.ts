@@ -8,10 +8,8 @@ import {
   fetchGitHubRepos as fetchRepos,
   processRepoStats,
 } from "@/cards/github-repos/github-api";
-import {
-  generateReposListSVG,
-  generateTopReposSVG,
-} from "@/cards/github-repos/svg-generator-list";
+import { generateReposListSVG } from "@/cards/github-repos/svg-generator-list";
+import { generateTopReposSVG } from "@/cards/github-repos/svg-generator-top-repos";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -20,18 +18,23 @@ export async function GET(request: NextRequest) {
   const showBorder = searchParams.get("showBorder") !== "false";
   const language = searchParams.get("language") || "pt";
   const cardType = searchParams.get("type") || "stats"; // "stats", "repos-list" ou "top-repos"
+  const maxRepos = parseInt(searchParams.get("maxRepos") || "5"); // 3, 5 ou 10
 
   try {
     if (cardType === "repos-list") {
       // Card de lista de repositórios
-      const repos = await fetchRepos(username);
-      const repoStats = processRepoStats(repos, username);
+      const [user, repos] = await Promise.all([
+        fetchGitHubUser(username),
+        fetchRepos(username),
+      ]);
+      const repoStats = processRepoStats(repos, username, user.public_repos);
       const svg = generateReposListSVG(
         repoStats,
         repos,
         theme,
         language as "pt" | "en",
-        showBorder
+        showBorder,
+        maxRepos
       );
 
       return new Response(svg, {
@@ -42,8 +45,11 @@ export async function GET(request: NextRequest) {
       });
     } else if (cardType === "top-repos") {
       // Card dos 3 repositórios mais estrelados
-      const repos = await fetchRepos(username);
-      const repoStats = processRepoStats(repos, username);
+      const [user, repos] = await Promise.all([
+        fetchGitHubUser(username),
+        fetchRepos(username),
+      ]);
+      const repoStats = processRepoStats(repos, username, user.public_repos);
       const svg = generateTopReposSVG(
         repoStats,
         repos,
@@ -154,7 +160,8 @@ export async function GET(request: NextRequest) {
               [],
               theme,
               language as "pt" | "en",
-              showBorder
+              showBorder,
+              maxRepos
             );
 
       return new Response(errorSVG, {

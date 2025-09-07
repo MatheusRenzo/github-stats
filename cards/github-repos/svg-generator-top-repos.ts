@@ -1,13 +1,12 @@
 import { RepoStats } from "./types";
 import { getTheme, Theme } from "../../themes";
 
-export function generateReposListSVG(
+export function generateTopReposSVG(
   repoStats: RepoStats,
   repos: any[] = [],
   theme: string = "dark",
   language: "pt" | "en" = "pt",
-  showBorder: boolean = true,
-  maxRepos: number = 5
+  showBorder: boolean = true
 ): string {
   const currentTheme = getTheme(theme);
   const isDark =
@@ -20,20 +19,21 @@ export function generateReposListSVG(
   // Textos baseados no idioma
   const texts = {
     pt: {
-      title: "Repositórios do GitHub",
+      title: "Top Repositórios",
       totalRepos: "repositórios",
       stars: "estrelas",
       forks: "forks",
-      language: "linguagen",
+      language: "linguagem",
       updated: "atualizado",
       created: "criado",
       description: "Descrição",
       noDescription: "Sem descrição",
       public: "Público",
       private: "Privado",
+      rank: "posição",
     },
     en: {
-      title: "GitHub Repositories",
+      title: "Top Repositories",
       totalRepos: "repositories",
       stars: "stars",
       forks: "forks",
@@ -44,13 +44,11 @@ export function generateReposListSVG(
       noDescription: "No description",
       public: "Public",
       private: "Private",
+      rank: "rank",
     },
   };
 
   const t = texts[language];
-
-  // Espaçamento entre cards
-  const spacing = 3;
 
   // Função para formatar números
   const formatNumber = (num: number): string => {
@@ -217,25 +215,30 @@ export function generateReposListSVG(
     return lines;
   };
 
-  // Função para calcular altura fixa do card
+  // Função para calcular altura dinâmica do card baseada na descrição
   const calculateCardHeight = (description: string): number => {
-    // Altura fixa para todos os cards - 50px
-    return 50;
+    const wrappedLines = wrapText(description, 55, 8);
+    const baseHeight = 70; // Altura base (rank, nome, linguagem, stats) - reduzida
+    const lineHeight = 12; // Altura de cada linha de texto - reduzida
+    const padding = 15; // Padding vertical - reduzido
+    
+    return baseHeight + (wrappedLines.length * lineHeight) + padding;
   };
 
   // Função para calcular altura total do SVG
   const calculateTotalHeight = (repos: any[]): number => {
     if (repos.length === 0) return 600; // Altura padrão se não houver repositórios
     
-    const headerHeight = 150; // Header + Stats Summary
+    const headerHeight = 125; // Header + Stats Summary
     const footerHeight = 40; // Footer
+    const spacing = 5; // Espaçamento entre cards - reduzido
     
-    const totalCardsHeight = repos.reduce((total, repo, index) => {
+    const totalCardsHeight = repos.reduce((total, repo) => {
       const description = repo.description || t.noDescription;
-      return total + calculateCardHeight(description) + (index < repos.length - 1 ? spacing : 0);
+      return total + calculateCardHeight(description) + spacing;
     }, 0);
     
-    return headerHeight + totalCardsHeight + footerHeight + 8; // +8 para margem mínima
+    return headerHeight + totalCardsHeight + footerHeight + 15; // +15 para margem - reduzido
   };
 
   // Função para gerar bordas LED dinâmicas
@@ -292,8 +295,8 @@ export function generateReposListSVG(
     return borders;
   };
 
-  // Usar repositórios reais se disponíveis, senão deixar vazio
-  let reposToShow: Array<{
+  // Filtrar e pegar os 3 repositórios mais estrelados
+  let topRepos: Array<{
     name: string;
     description: string;
     language: string;
@@ -302,16 +305,39 @@ export function generateReposListSVG(
     updated_at: string;
     created_at: string;
     private: boolean;
+    rank: number;
     cardHeight: number;
   }> = [];
 
   if (repos && repos.length > 0) {
-    // Filtrar repositórios (remover forks se necessário) e ordenar por estrelas
-    reposToShow = repos
-      .filter((repo) => !repo.fork) // Remover forks
-      .sort((a, b) => b.stargazers_count - a.stargazers_count) // Ordenar por estrelas
-      .slice(0, maxRepos) // Pegar a quantidade especificada
-      .map((repo) => {
+    // Filtrar repositórios que não são forks
+    const filteredRepos = repos.filter((repo) => !repo.fork);
+    
+    // Primeiro, tentar pegar repositórios com pelo menos 1 estrela
+    let reposWithStars = filteredRepos.filter((repo) => repo.stargazers_count > 0);
+    
+    // Se não houver repositórios com estrelas, pegar os que têm pelo menos 1 fork
+    if (reposWithStars.length === 0) {
+      reposWithStars = filteredRepos.filter((repo) => repo.forks_count > 0);
+    }
+    
+    // Se ainda não houver nenhum, pegar todos os repositórios
+    if (reposWithStars.length === 0) {
+      reposWithStars = filteredRepos;
+    }
+    
+    // Ordenar por estrelas (peso maior) e depois por forks
+    topRepos = reposWithStars
+      .sort((a, b) => {
+        // Primeiro critério: estrelas (peso maior)
+        if (b.stargazers_count !== a.stargazers_count) {
+          return b.stargazers_count - a.stargazers_count;
+        }
+        // Segundo critério: forks
+        return b.forks_count - a.forks_count;
+      })
+      .slice(0, 3) // Pegar os 3 melhores
+      .map((repo, index) => {
         const description = repo.description || t.noDescription;
         return {
         name: repo.full_name,
@@ -322,14 +348,14 @@ export function generateReposListSVG(
         updated_at: repo.updated_at,
         created_at: repo.created_at,
         private: repo.private,
+        rank: index + 1,
           cardHeight: calculateCardHeight(description),
         };
       });
   }
-  // Se não houver repositórios, reposToShow permanece vazio
 
   // Calcular altura total dinâmica
-  const totalHeight = calculateTotalHeight(reposToShow);
+  const totalHeight = calculateTotalHeight(topRepos);
 
   // Gerar SVG
   const svg = `
@@ -596,83 +622,86 @@ export function generateReposListSVG(
       : ""
   }
   
-  <!-- Header -->
+  <!-- Header - Better organized -->
   <g>
-    <rect x="40" y="30" width="520" height="60" fill="${
+    <rect x="40" y="30" width="520" height="55" fill="${
       currentTheme.cardBg
-    }" rx="8"/>
-    <text x="300" y="55" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="bold" fill="${
+    }" rx="8" opacity="0.9"/>
+    <text x="300" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="bold" fill="${
       currentTheme.primary
     }" text-anchor="middle">
-      📁 ${t.title}
+      🏆 ${t.title}
     </text>
-    <text x="300" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="16" fill="${
+    <text x="300" y="72" font-family="system-ui, -apple-system, sans-serif" font-size="15" fill="${
       currentTheme.text
-    }" text-anchor="middle">
-      @${escapeXml(repoStats.username)} • ${repoStats.totalRepos} ${t.totalRepos}
+    }" text-anchor="middle" opacity="0.9">
+      @${escapeXml(repoStats.username)}
     </text>
   </g>
   
-  <!-- Stats Summary -->
+  <!-- Stats Summary - Better positioned -->
   <g>
-    <rect x="40" y="100" width="520" height="40" fill="${
+    <rect x="40" y="95" width="520" height="30" fill="${
       currentTheme.cardBg
     }" rx="8" opacity="0.8"/>
-         <text x="300" y="116" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="${
-           currentTheme.text
-         }" text-anchor="middle">
-       ⭐ ${formatNumber(repoStats.totalStars)} ${t.stars} • 🍴 ${formatNumber(
+    <text x="300" y="112" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="${
+      currentTheme.text
+    }" text-anchor="middle" opacity="0.9">
+      ⭐ ${formatNumber(repoStats.totalStars)} ${t.stars} • 🍴 ${formatNumber(
     repoStats.totalForks
-  )} ${t.forks} • 👀 ${formatNumber(repoStats.totalWatchers)} watchers
-     </text>
-     <text x="300" y="135" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="${
-       currentTheme.text
-     }" text-anchor="middle">
-       🏷️ ${repoStats.languages.length} ${t.language}s
-     </text>
+  )} ${t.forks}
+    </text>
   </g>
   
-  <!-- Repositories List - Dynamic height cards -->
-  <g transform="translate(40, 150)">
+  <!-- Top Repositories List - Minimalist Design -->
+  <g transform="translate(40, 130)">
     ${
-      reposToShow.length > 0
+      topRepos.length > 0
         ? (() => {
             let currentY = 0;
-            return reposToShow
+            return topRepos
               .map((repo, index) => {
                 const cardHeight = repo.cardHeight;
-                const wrappedLines = wrapText(repo.description, 55, 2);
+                const wrappedLines = wrapText(repo.description, 55, 8);
+                const descriptionEndY = 50 + (wrappedLines.length * 12);
+                // Posicionar elementos na parte inferior do card
+                const languageY = cardHeight - 25; // 25px do fundo
+                const starsY = cardHeight - 25; // 25px do fundo
                 
                 const result = `
         <g transform="translate(0, ${currentY})">
-          <!-- Repository Card with Link - Compact design -->
+          <!-- Repository Card with Link - Dynamic height -->
           <a href="https://github.com/${repo.name}" target="_blank" rel="noopener noreferrer">
             <rect x="0" y="0" width="520" height="${cardHeight}" fill="${
               currentTheme.cardBg
-            }" rx="6" stroke="${
+            }" rx="10" stroke="${
                   currentTheme.border
-                }" stroke-width="1" style="cursor: pointer;"/>
+                }" stroke-width="1" opacity="0.9" style="cursor: pointer;"/>
             
-            <!-- Repository Icon -->    
-            <text x="18" y="29" font-family="system-ui, -apple-system, sans-serif" font-size="19" fill="${
+            <!-- Rank Badge - Better positioned -->
+            <circle cx="35" cy="35" r="18" fill="${
               currentTheme.primary
-            }" text-anchor="middle">📁</text>
-            
-            <!-- Repository Name -->
-            <text x="35" y="20" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="600" fill="${
-              currentTheme.primary
-            }">
-              ${escapeXml(truncateText(repo.name.split("/").pop() || repo.name, 35))}
+            }" opacity="0.9"/>
+            <text x="35" y="40" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="bold" fill="${
+              currentTheme.background
+            }" text-anchor="middle">
+              ${repo.rank}
             </text>
             
-            <!-- Repository Description - Fixed height with 2 lines max -->
-            ${wrappedLines
-              .slice(0, 2) // Garantir máximo 2 linhas
+            <!-- Repository Name - Better positioned -->
+            <text x="75" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="700" fill="${
+              currentTheme.primary
+            }">
+              ${escapeXml(truncateText(repo.name.split("/").pop() || repo.name, 45))}
+            </text>
+            
+            <!-- Repository Description - Multi-line with proper wrapping and better spacing -->
+            ${wrapText(repo.description, 55, 8)
               .map(
                 (line, lineIndex) => `
-              <text x="35" y="${
-                32 + lineIndex * 12
-              }" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="${
+              <text x="75" y="${
+                50 + lineIndex * 12
+              }" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="${
                   currentTheme.text
                 }" opacity="0.9">
                 ${escapeXml(line)}
@@ -681,33 +710,39 @@ export function generateReposListSVG(
               )
               .join("")}
             
-            <!-- Language -->
-            <circle cx="360" cy="25" r="5" fill="${getLanguageColor(
-              repo.language
-            )}"/>
-            <text x="370" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="${
-              currentTheme.text
-            }">
-              ${escapeXml(repo.language)}
-            </text>
+            <!-- Language and Stats - Better organized and positioned -->
+            <g transform="translate(75, ${languageY})">
+              <!-- Language -->
+              <circle cx="0" cy="0" r="5" fill="${getLanguageColor(
+                repo.language
+              )}"/>
+              <text x="12" y="4" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="${
+                currentTheme.text
+              }" opacity="0.8">
+                ${escapeXml(repo.language)}
+              </text>
+            </g>
             
-            <!-- Stars -->
-            <text x="448" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="${
-              currentTheme.text
-            }">
-              ⭐${formatNumber(repo.stars)}
-            </text>
-            
-            <!-- Forks -->
-            <text x="450" y="38" font-family="system-ui, -apple-system, sans-serif" font-size="13" fill="${
-              currentTheme.text
-            }">
-              🍴 ${formatNumber(repo.forks)}
-            </text>
+            <!-- Stars and Forks - Right side, better positioned -->
+            <g transform="translate(400, ${starsY})">
+              <!-- Stars -->
+              <text x="0" y="0" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="${
+                currentTheme.text
+              }" opacity="0.9">
+                ⭐ ${formatNumber(repo.stars)}
+              </text>
+              
+              <!-- Forks -->
+              <text x="0" y="14" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="${
+                currentTheme.text
+              }" opacity="0.9">
+                🍴 ${formatNumber(repo.forks)}
+              </text>
+            </g>
           </a>
         </g>`;
                 
-                currentY += cardHeight + (index < reposToShow.length - 1 ? spacing : 0); // Espaçamento apenas entre cards
+                currentY += cardHeight + 5; // 5px de espaçamento entre cards
                 return result;
               })
               .join("");
@@ -728,8 +763,8 @@ export function generateReposListSVG(
   </g>
   
   <!-- Footer - Dynamic positioning based on content height -->
-  <g transform="translate(40, ${reposToShow.length > 0 ? 150 + reposToShow.reduce((total, repo, index) => total + repo.cardHeight + (index < reposToShow.length - 1 ? spacing : 0), 0) + 8 : 570})">
-    <text x="0" y="21" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="${ 
+  <g transform="translate(40, ${topRepos.length > 0 ? 130 + topRepos.reduce((total, repo, index) => total + repo.cardHeight + (index > 0 ? 5 : 0), 0) + 15 : 570})">
+    <text x="0" y="15" font-family="system-ui, -apple-system, sans-serif" font-size="10" fill="${
       currentTheme.text
     }">
       Gerado em ${new Date().toLocaleDateString(
@@ -741,4 +776,3 @@ export function generateReposListSVG(
 
   return svg;
 }
-

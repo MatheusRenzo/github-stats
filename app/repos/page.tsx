@@ -9,6 +9,7 @@ export default function ReposPage() {
   const [language, setLanguage] = useState("pt");
   const [showBorder, setShowBorder] = useState(true);
   const [cardType, setCardType] = useState("repos-list");
+  const [maxRepos, setMaxRepos] = useState(5);
 
   const generateUrl = () => {
     const params = new URLSearchParams({
@@ -17,6 +18,7 @@ export default function ReposPage() {
       language,
       showBorder: showBorder.toString(),
       type: cardType,
+      maxRepos: maxRepos.toString(),
     });
     return `/api/stats?${params.toString()}`;
   };
@@ -290,13 +292,52 @@ export default function ReposPage() {
                   }}
                 >
                   <option value="repos-list" style={{ background: "#1f2937" }}>
-                    📁 Cards de Repositórios (5 últimos)
+                    📁 Cards de Repositórios
                   </option>
                   <option value="top-repos" style={{ background: "#1f2937" }}>
                     🏆 Top 3 Repositórios (mais estrelados)
                   </option>
                 </select>
               </div>
+
+              {cardType === "repos-list" && (
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "white",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Quantidade de Repositórios
+                  </label>
+                  <select
+                    value={maxRepos}
+                    onChange={(e) => setMaxRepos(parseInt(e.target.value))}
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem",
+                      borderRadius: "0.5rem",
+                      border: "1px solid rgba(75, 85, 99, 0.3)",
+                      background: "rgba(17, 24, 39, 0.5)",
+                      color: "white",
+                      fontSize: "1rem",
+                    }}
+                  >
+                    <option value={3} style={{ background: "#1f2937" }}>
+                      📊 3 Repositórios
+                    </option>
+                    <option value={5} style={{ background: "#1f2937" }}>
+                      📊 5 Repositórios (padrão)
+                    </option>
+                    <option value={10} style={{ background: "#1f2937" }}>
+                      📊 10 Repositórios
+                    </option>
+                  </select>
+                </div>
+              )}
 
               <div>
                 <label
@@ -461,7 +502,7 @@ export default function ReposPage() {
                     wordBreak: "break-all",
                   }}
                 >
-                  {`![GitHub Repositories](https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder})`}
+                  {`![GitHub Repositories](https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}&maxRepos=${maxRepos})`}
                 </code>
               </div>
             </div>
@@ -494,7 +535,7 @@ export default function ReposPage() {
                     wordBreak: "break-all",
                   }}
                 >
-                  {`<img src="https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}" alt="GitHub Repositories" />`}
+                  {`<img src="https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}&maxRepos=${maxRepos}" alt="GitHub Repositories" />`}
                 </code>
               </div>
             </div>
@@ -527,7 +568,7 @@ export default function ReposPage() {
                     wordBreak: "break-all",
                   }}
                 >
-                  {`https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}`}
+                  {`https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}&maxRepos=${maxRepos}`}
                 </code>
               </div>
             </div>
@@ -637,6 +678,14 @@ export default function ReposPage() {
                   <td style={{ padding: "0.5rem" }}>Mostrar borda animada</td>
                   <td style={{ padding: "0.5rem" }}>true, false</td>
                   <td style={{ padding: "0.5rem" }}>true</td>
+                </tr>
+                <tr style={{ borderBottom: "1px solid rgba(75, 85, 99, 0.1)" }}>
+                  <td style={{ padding: "0.5rem", fontFamily: "monospace" }}>
+                    maxRepos
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>Quantidade de repositórios (apenas para repos-list)</td>
+                  <td style={{ padding: "0.5rem" }}>3, 5, 10</td>
+                  <td style={{ padding: "0.5rem" }}>5</td>
                 </tr>
               </tbody>
             </table>

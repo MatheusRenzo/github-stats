@@ -148,12 +148,4 @@ export interface RepoOptions {
   includePrivate?: boolean;
 }
 
-export interface Theme {
-  background: string;
-  text: string;
-  primary: string;
-  secondary: string;
-  accent: string;
-  border: string;
-  cardBg: string;
-}
+// Theme interface moved to themes/index.ts
