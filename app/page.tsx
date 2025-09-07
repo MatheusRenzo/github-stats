@@ -10,6 +10,7 @@ export default function Home() {
   const [theme, setTheme] = useState("dark");
   const [showBorder, setShowBorder] = useState(true);
   const [language, setLanguage] = useState("pt");
+  const [borderType, setBorderType] = useState<"fire" | "water">("fire");
 
   const [svgUrl, setSvgUrl] = useState("");
   const [cleanUrl, setCleanUrl] = useState("");
@@ -20,7 +21,7 @@ export default function Home() {
   const generateCleanUrl = () => {
     return `/api/stats?username=${encodeURIComponent(
       username
-    )}&theme=${theme}&showBorder=${showBorder}&language=${language}`;
+    )}&theme=${theme}&showBorder=${showBorder}&language=${language}&borderType=${borderType}`;
   };
 
   const generateStats = async () => {
@@ -53,7 +54,7 @@ export default function Home() {
     if (username) {
       generateStats();
     }
-  }, [username, theme, showBorder, language]);
+  }, [username, theme, showBorder, language, borderType]);
 
   return (
     <div
@@ -270,10 +271,10 @@ export default function Home() {
               >
                 <option value="dark">Dark</option>
                 <option value="light">Light</option>
-                <option value="dracula">Dracula</option>
-                <option value="nord">Nord</option>
-                <option value="gruvbox">Gruvbox</option>
-                <option value="monokai">Monokai</option>
+                <option value="radical">Radical</option>
+                <option value="neon">Neon</option>
+                <option value="cyber">Cyber</option>
+                <option value="tanjiro">Tanjiro</option>
               </select>
             </div>
 
@@ -310,6 +311,38 @@ export default function Home() {
                 <option value="ja">日本語</option>
               </select>
             </div>
+
+            {theme === "tanjiro" && (
+              <div>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "0.875rem",
+                    fontWeight: "600",
+                    color: "white",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Técnica de Respiração
+                </label>
+                <select
+                  value={borderType}
+                  onChange={(e) => setBorderType(e.target.value as "fire" | "water")}
+                  style={{
+                    width: "100%",
+                    padding: "0.75rem",
+                    borderRadius: "0.5rem",
+                    border: "1px solid rgba(75, 85, 99, 0.3)",
+                    background: "rgba(17, 24, 39, 0.5)",
+                    color: "white",
+                    fontSize: "1rem",
+                  }}
+                >
+                  <option value="fire">🔥 Respiração do Fogo</option>
+                  <option value="water">💧 Respiração da Água</option>
+                </select>
+              </div>
+            )}
           </div>
 
           <div
@@ -481,7 +514,7 @@ export default function Home() {
                       wordBreak: "break-all",
                     }}
                   >
-                    {`![GitHub Stats](https://seu-dominio.com/api/stats?username=${username}&theme=${theme}&language=${language})`}
+                    {`![GitHub Stats](https://seu-dominio.com/api/stats?username=${username}&theme=${theme}&language=${language}&borderType=${borderType})`}
                   </code>
                 </div>
               </div>

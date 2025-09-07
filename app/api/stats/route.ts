@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
   const language = searchParams.get("language") || "pt";
   const cardType = searchParams.get("type") || "stats"; // "stats", "repos-list" ou "top-repos"
   const maxRepos = parseInt(searchParams.get("maxRepos") || "5"); // 3, 5 ou 10
+  const borderType = (searchParams.get("borderType") as "fire" | "water") || "fire"; // "fire" ou "water" para tema Tanjiro
 
   try {
     if (cardType === "repos-list") {
@@ -34,7 +35,8 @@ export async function GET(request: NextRequest) {
         theme,
         language as "pt" | "en",
         showBorder,
-        maxRepos
+        maxRepos,
+        borderType
       );
 
       return new Response(svg, {
@@ -55,7 +57,8 @@ export async function GET(request: NextRequest) {
         repos,
         theme,
         language as "pt" | "en",
-        showBorder
+        showBorder,
+        borderType
       );
 
       return new Response(svg, {
@@ -108,7 +111,7 @@ export async function GET(request: NextRequest) {
         ),
       };
 
-      const svg = generateStatsSVG(stats, theme, language, showBorder);
+      const svg = generateStatsSVG(stats, theme, language, showBorder, borderType);
 
       return new Response(svg, {
         headers: {
@@ -153,7 +156,8 @@ export async function GET(request: NextRequest) {
               [],
               theme,
               language as "pt" | "en",
-              showBorder
+              showBorder,
+              borderType
             )
           : generateReposListSVG(
               errorRepoStats,
@@ -161,7 +165,8 @@ export async function GET(request: NextRequest) {
               theme,
               language as "pt" | "en",
               showBorder,
-              maxRepos
+              maxRepos,
+              borderType
             );
 
       return new Response(errorSVG, {
@@ -189,7 +194,8 @@ export async function GET(request: NextRequest) {
         errorStats,
         theme,
         language,
-        showBorder
+        showBorder,
+        borderType
       );
 
       return new Response(errorSVG, {

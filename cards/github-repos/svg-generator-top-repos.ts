@@ -6,7 +6,8 @@ export function generateTopReposSVG(
   repos: any[] = [],
   theme: string = "dark",
   language: "pt" | "en" = "pt",
-  showBorder: boolean = true
+  showBorder: boolean = true,
+  borderType: "fire" | "water" = "fire"
 ): string {
   const currentTheme = getTheme(theme);
   const isDark =
@@ -388,15 +389,54 @@ export function generateTopReposSVG(
       <stop offset="100%" stop-color="#ffffff"/>
     </linearGradient>
 
-    <!-- Filtro de ondulação do fogo -->
-    <filter id="flameWave">
-      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.05" numOctaves="2" seed="3" result="noise">
+    <!-- Filtro de fogo melhorado -->
+    <filter id="fire" x="-50%" y="-50%" width="200%" height="200%">
+      <!-- Ruído animado -->
+      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.25"
+                    numOctaves="4" seed="8" result="noise">
         <animate attributeName="baseFrequency"
-                 values="0.02 0.05;0.03 0.08;0.02 0.05"
-                 dur="4s"
-                 repeatCount="indefinite"/>
+                 values="0.02 0.25;0.018 0.35;0.02 0.25"
+                 dur="4s" repeatCount="indefinite"/>
       </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="18"/>
+
+      <!-- Deslocamento das bordas -->
+      <feDisplacementMap in="SourceGraphic" in2="noise"
+                         scale="25" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale"
+                 values="15;30;15" dur="2.5s" repeatCount="indefinite"/>
+      </feDisplacementMap>
+
+      <!-- Blur e glow -->
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Filtros de água suave - baseado no fogo mas com movimento calmo -->
+    <filter id="water" x="-50%" y="-50%" width="200%" height="200%">
+      <!-- Ruído suave para movimento calmo da água -->
+      <feTurbulence type="fractalNoise" baseFrequency="0.01 0.15"
+                    numOctaves="3" seed="4" result="noise">
+        <animate attributeName="baseFrequency"
+                 values="0.01 0.15;0.008 0.20;0.01 0.15"
+                 dur="6s" repeatCount="indefinite"/>
+      </feTurbulence>
+
+      <!-- Deslocamento suave das bordas -->
+      <feDisplacementMap in="SourceGraphic" in2="noise"
+                         scale="12" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale"
+                 values="8;15;8" dur="4s" repeatCount="indefinite"/>
+      </feDisplacementMap>
+
+      <!-- Blur e glow suave -->
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
     </filter>
     
     <!-- Neon Glow Filter -->
@@ -553,34 +593,108 @@ export function generateTopReposSVG(
   ${
     showBorder
       ? theme === "tanjiro"
-        ? `
-  <!-- Tanjiro Flame Borders - Dynamic height -->
-  <!-- Top flame border -->
-  <rect x="20.5" y="5.5" width="559" height="25" fill="url(#fireGradient)" filter="url(#flameWave)">
-    <animateTransform attributeName="transform" type="translate" values="0 0;0 -5;0 0" dur="2s" repeatCount="indefinite"/>
-  </rect>
-  <!-- Bottom flame border -->
-  <rect x="20.5" y="${totalHeight - 15.5}" width="559" height="25" fill="url(#fireGradient)" filter="url(#flameWave)">
-    <animateTransform attributeName="transform" type="translate" values="0 0;0 5;0 0" dur="2s" repeatCount="indefinite"/>
-  </rect>
-  <!-- Left flame border -->
-  <rect x="20.5" y="5.5" width="25" height="${totalHeight - 20}" fill="url(#fireGradient)" filter="url(#flameWave)">
-    <animateTransform attributeName="transform" type="translate" values="0 0;-5 0;0 0" dur="2s" repeatCount="indefinite"/>
-  </rect>
-  <!-- Right flame border -->
-  <rect x="554.5" y="5.5" width="25" height="${totalHeight - 20}" fill="url(#fireGradient)" filter="url(#flameWave)">
-    <animateTransform attributeName="transform" type="translate" values="0 0;5 0;0 0" dur="2s" repeatCount="indefinite"/>
+        ? borderType === "fire"
+          ? `
+  <!-- Tanjiro Fire Borders - Dynamic height com múltiplas camadas -->
+  <!-- 🔥 camada vermelha -->
+  <rect x="20.5" y="5.5" width="559" height="${totalHeight - 10}" rx="12" ry="12"
+        fill="none" stroke="#a31600" stroke-width="8"
+        filter="url(#fire)">
+    <animateTransform attributeName="transform"
+                      type="translate"
+                      values="0 0; 0 -3; 0 0"
+                      dur="2s" repeatCount="indefinite"/>
   </rect>
 
-  <!-- Partículas discretas nas bordas -->
-  <g fill="yellow" opacity="0.5">
-    <circle cx="75" cy="10.5" r="1">
+  <!-- 🔥 camada laranja -->
+  <rect x="20.5" y="5.5" width="559" height="${totalHeight - 10}" rx="12" ry="12"
+        fill="none" stroke="#ff6a00" stroke-width="6"
+        filter="url(#fire)">
+    <animateTransform attributeName="transform"
+                      type="translate"
+                      values="0 0; 0 -2; 0 0"
+                      dur="1.8s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- 🔥 camada amarela/branca -->
+  <rect x="20.5" y="5.5" width="559" height="${totalHeight - 10}" rx="12" ry="12"
+        fill="none" stroke="#fff6a3" stroke-width="4"
+        filter="url(#fire)">
+    <animateTransform attributeName="transform"
+                      type="translate"
+                      values="0 0; 0 -1; 0 0"
+                      dur="1.6s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Partículas de fogo mais realistas -->
+  <g fill="yellow" opacity="0.6">
+    <circle cx="75" cy="10.5" r="1.2">
       <animate attributeName="cy" values="10.5;30.5" dur="1.5s" repeatCount="indefinite"/>
       <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite"/>
     </circle>
-    <circle cx="450" cy="${totalHeight - 15.5}" r="1.5">
+    <circle cx="450" cy="${totalHeight - 15.5}" r="1.8">
       <animate attributeName="cy" values="${totalHeight - 15.5};${totalHeight - 35.5}" dur="2s" repeatCount="indefinite"/>
       <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="300" cy="10.5" r="0.8">
+      <animate attributeName="cy" values="10.5;25.5" dur="1.8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.8;0" dur="1.8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="${totalHeight - 15.5}" r="1.1">
+      <animate attributeName="cy" values="${totalHeight - 15.5};${totalHeight - 28.5}" dur="2.2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.7;0" dur="2.2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+`
+          : `
+  <!-- Tanjiro Water Borders - Dynamic height com múltiplas camadas suaves -->
+  <!-- 💧 camada 1 - azul profundo -->
+  <rect x="20.5" y="5.5" width="559" height="${totalHeight - 10}" rx="12" ry="12"
+        fill="none" stroke="#0c4a6e" stroke-width="8"
+        filter="url(#water)">
+    <animateTransform attributeName="transform"
+                      type="translate"
+                      values="0 0; 0 -2; 0 0"
+                      dur="3s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- 💧 camada 2 - azul médio/ciano -->
+  <rect x="20.5" y="5.5" width="559" height="${totalHeight - 10}" rx="12" ry="12"
+        fill="none" stroke="#0284c7" stroke-width="6"
+        filter="url(#water)">
+    <animateTransform attributeName="transform"
+                      type="translate"
+                      values="0 0; 0 -1.5; 0 0"
+                      dur="2.5s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- 💧 camada 3 - azul claro / branco brilho -->
+  <rect x="20.5" y="5.5" width="559" height="${totalHeight - 10}" rx="12" ry="12"
+        fill="none" stroke="#7dd3fc" stroke-width="4"
+        filter="url(#water)">
+    <animateTransform attributeName="transform"
+                      type="translate"
+                      values="0 0; 0 -1; 0 0"
+                      dur="2s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Partículas de água suaves e calmas -->
+  <g fill="#0ea5e9" opacity="0.3">
+    <circle cx="100" cy="10.5" r="1.2">
+      <animate attributeName="cy" values="10.5;30.5" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.6;0" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="${totalHeight - 15.5}" r="1.5">
+      <animate attributeName="cy" values="${totalHeight - 15.5};${totalHeight - 35.5}" dur="3.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.5;0" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="250" cy="10.5" r="0.8">
+      <animate attributeName="cy" values="10.5;25.5" dur="2.8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.7;0" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="500" cy="${totalHeight - 15.5}" r="1.1">
+      <animate attributeName="cy" values="${totalHeight - 15.5};${totalHeight - 30.5}" dur="3.2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.4;0" dur="3.2s" repeatCount="indefinite"/>
     </circle>
   </g>
 `

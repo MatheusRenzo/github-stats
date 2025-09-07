@@ -10,6 +10,7 @@ export default function ReposPage() {
   const [showBorder, setShowBorder] = useState(true);
   const [cardType, setCardType] = useState("repos-list");
   const [maxRepos, setMaxRepos] = useState(5);
+  const [borderType, setBorderType] = useState<"fire" | "water">("fire");
 
   const generateUrl = () => {
     const params = new URLSearchParams({
@@ -19,6 +20,7 @@ export default function ReposPage() {
       showBorder: showBorder.toString(),
       type: cardType,
       maxRepos: maxRepos.toString(),
+      borderType,
     });
     return `/api/stats?${params.toString()}`;
   };
@@ -393,6 +395,38 @@ export default function ReposPage() {
                 </label>
               </div>
 
+              {theme === "tanjiro" && (
+                <div>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      color: "white",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Técnica de Respiração
+                  </label>
+                  <select
+                    value={borderType}
+                    onChange={(e) => setBorderType(e.target.value as "fire" | "water")}
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem",
+                      borderRadius: "0.5rem",
+                      border: "1px solid rgba(75, 85, 99, 0.3)",
+                      background: "rgba(17, 24, 39, 0.5)",
+                      color: "white",
+                      fontSize: "1rem",
+                    }}
+                  >
+                    <option value="fire">🔥 Respiração do Fogo</option>
+                    <option value="water">💧 Respiração da Água</option>
+                  </select>
+                </div>
+              )}
+
               <button
                 onClick={copyToClipboard}
                 style={{
@@ -502,7 +536,7 @@ export default function ReposPage() {
                     wordBreak: "break-all",
                   }}
                 >
-                  {`![GitHub Repositories](https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}&maxRepos=${maxRepos})`}
+                  {`![GitHub Repositories](https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}&maxRepos=${maxRepos}&borderType=${borderType})`}
                 </code>
               </div>
             </div>
@@ -535,7 +569,7 @@ export default function ReposPage() {
                     wordBreak: "break-all",
                   }}
                 >
-                  {`<img src="https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}&maxRepos=${maxRepos}" alt="GitHub Repositories" />`}
+                  {`<img src="https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}&maxRepos=${maxRepos}&borderType=${borderType}" alt="GitHub Repositories" />`}
                 </code>
               </div>
             </div>
@@ -568,7 +602,7 @@ export default function ReposPage() {
                     wordBreak: "break-all",
                   }}
                 >
-                  {`https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}&maxRepos=${maxRepos}`}
+                  {`https://github-stats-rust-ten.vercel.app/api/stats?username=${username}&type=repos-list&theme=${theme}&language=${language}&showBorder=${showBorder}&maxRepos=${maxRepos}&borderType=${borderType}`}
                 </code>
               </div>
             </div>
@@ -686,6 +720,14 @@ export default function ReposPage() {
                   <td style={{ padding: "0.5rem" }}>Quantidade de repositórios (apenas para repos-list)</td>
                   <td style={{ padding: "0.5rem" }}>3, 5, 10</td>
                   <td style={{ padding: "0.5rem" }}>5</td>
+                </tr>
+                <tr style={{ borderBottom: "1px solid rgba(75, 85, 99, 0.1)" }}>
+                  <td style={{ padding: "0.5rem", fontFamily: "monospace" }}>
+                    borderType
+                  </td>
+                  <td style={{ padding: "0.5rem" }}>Tipo de borda para tema Tanjiro</td>
+                  <td style={{ padding: "0.5rem" }}>fire, water</td>
+                  <td style={{ padding: "0.5rem" }}>fire</td>
                 </tr>
               </tbody>
             </table>
